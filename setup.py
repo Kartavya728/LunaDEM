@@ -13,7 +13,7 @@ README = Path("README.md").read_text(encoding="utf-8")
 
 setup(
     name="lunadem",
-    version="0.1.0",
+    version="0.1.1",
     description="Production-ready DEM generation toolkit for lunar and planetary imagery.",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -49,7 +49,16 @@ setup(
         ],
         "release": ["build>=1.2", "twine>=6.2", "wheel>=0.45"],
     },
-    entry_points={"console_scripts": ["lunardem=lunardem.cli:main"]},
+    entry_points={
+        "console_scripts": [
+            "lunardem=lunardem.cli:main",
+            "lunadem=lunardem.cli:lunadem_main",
+            "kartavya=lunardem.cli:kartavya_main",
+            "babies=lunardem.cli:babies_main",
+            "noor=lunardem.cli:noor_main",
+            "overkill=lunardem.cli:overkill_main",
+        ]
+    },
     keywords=[
         "dem",
         "shape-from-shading",

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lunadem"
-version = "0.1.1"
+version = "0.2.1"
 description = "Production-ready DEM generation toolkit for lunar and planetary imagery."
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
@@ -76,6 +76,11 @@ Issues = "https://github.com/Kartavya728/Generation-of-High-resolution-Digital-E
 
 [project.scripts]
 lunardem = "lunardem.cli:main"
+lunadem = "lunardem.cli:lunadem_main"
+kartavya = "lunardem.cli:kartavya_main"
+babies = "lunardem.cli:babies_main"
+noor = "lunardem.cli:noor_main"
+overkill = "lunardem.cli:overkill_main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["lunardem", "sfs_photoclinometry"]
