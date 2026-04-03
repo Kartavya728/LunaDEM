@@ -22,9 +22,16 @@ static/outputs/
 *.ply
 *.tif
 *.tiff
+
+# Local docs not intended for GitHub
 upload.md
+explain.md
+new_func.md
+*.readme
+*readme*.md
+!README.md
+
 # Local IDE artifacts
 .vscode/
 .idea/
 tempCodeRunnerFile.py
-

@@ -1,47 +1,47 @@
-# LunarDEM
+# lunadem
 
-LunarDEM is a production-oriented Python library for generating and analyzing Digital Elevation Models (DEM) from lunar and planetary imagery.
+`lunadem` is a Python library for generating and analyzing Digital Elevation Models (DEM) from lunar and planetary images.
 
-It ships with:
+PyPI release page:
 
-- shape-from-shading (SFS) reconstruction
-- multi-scale SFS
-- plugin-ready ML method scaffolding
-- hybrid SFS + ML fusion
-- terrain analytics (slope, roughness, curvature, histograms)
-- deterministic landing suitability analysis
-- geospatial exports (GeoTIFF, OBJ, PLY)
-- CLI + Python API + PyPI-ready packaging
+https://pypi.org/project/lunadem/0.1.1/
 
-## Installation
+## Install
 
 ```bash
-pip install .
+pip install lunadem
 ```
 
-Optional extras:
+Note: in code, current module import is `lunardem`.
 
-```bash
-pip install .[viz]
-pip install .[ml]
-pip install .[docs]
-pip install .[dev]
-```
+## Main Capabilities
 
-## Quick Start (Python API)
+- DEM generation from image input (PNG, JPG, TIFF, GeoTIFF)
+- Multiple methods: `sfs`, `multiscale_sfs`, `ml`, `hybrid`
+- Terrain analytics: slope, roughness, curvature, elevation statistics, histogram summaries
+- Landing suitability: safe/unsafe masks, hazard filtering, score and safe-area summary
+- Exports: GeoTIFF DEM, OBJ/PLY mesh, visualization images, JSON run manifest
+
+## Core Functions (Python API)
+
+- `generate_dem(input_data, method, config) -> DEMResult`
+- `analyze_dem(dem_or_path, analysis_config) -> TerrainMetrics`
+- `assess_landing(dem_or_path, landing_config) -> LandingReport`
+
+## Quick API Example
 
 ```python
-from lunardem import generate_dem, ReconstructionConfig
+from lunardem import ReconstructionConfig, generate_dem
 
-config = ReconstructionConfig(
+cfg = ReconstructionConfig(
     output={"output_dir": "output", "base_name": "moon_run"},
 )
-result = generate_dem("data/moon1.png", method="multiscale_sfs", config=config)
+result = generate_dem("data/moon1.png", method="multiscale_sfs", config=cfg)
 print(result.exports)
 print(result.metrics.stats)
 ```
 
-## Quick Start (CLI)
+## CLI Usage
 
 ```bash
 lunardem generate data/moon1.png --method sfs --output output
@@ -49,53 +49,35 @@ lunardem analyze output/reconstructed_dem.tif
 lunardem landing output/reconstructed_dem.tif --spacecraft examples/configs/landing.yaml
 ```
 
-## Public API
+## Web App Usage
 
-- `generate_dem(input_data, method, config) -> DEMResult`
-- `analyze_dem(dem_or_path, analysis_config) -> TerrainMetrics`
-- `assess_landing(dem_or_path, landing_config) -> LandingReport`
+Web app is provided as a demo in:
 
-## Methods
+`examples/webapp/app.py`
 
-- `sfs`: single-scale Lambertian SFS with optimization diagnostics
-- `multiscale_sfs`: coarse-to-fine SFS
-- `ml`: deterministic baseline scaffold with optional torch plugin path
-- `hybrid`: weighted SFS+ML fusion with fallback behavior
-
-## Outputs
-
-- DEM array in meters
-- GeoTIFF (`.tif`) with planetary CRS defaults
-- 3D mesh (`.obj`, optional `.ply`)
-- Visualizations (`depth_map.png`, `surface_3d.png`) with `viz` extra
-- JSON manifest for reproducibility
-
-## Documentation
-
-Build docs locally:
+Run:
 
 ```bash
-pip install .[docs]
-mkdocs serve
+python examples/webapp/app.py
 ```
 
-## Development
+Then open:
+
+`http://127.0.0.1:5000/`
+
+Endpoints:
+
+- `GET /` health message
+- `POST /generate` image upload + DEM generation response
+
+## Optional Extras
 
 ```bash
-pip install .[dev]
-pytest
-ruff check .
-mypy lunardem
-python -m build
-twine check dist/*
-```
-
-## Publish to PyPI
-
-```bash
-python -m build
-twine check dist/*
-twine upload dist/*
+pip install "lunadem[viz]"
+pip install "lunadem[ml]"
+pip install "lunadem[pds]"
+pip install "lunadem[docs]"
+pip install "lunadem[dev]"
 ```
 
 ## License
