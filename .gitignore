@@ -22,7 +22,7 @@ static/outputs/
 *.ply
 *.tif
 *.tiff
-
+upload.md
 # Local IDE artifacts
 .vscode/
 .idea/
