@@ -1,0 +1,30 @@
+# Bytecode and build outputs
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+
+# Demo and generated outputs
+output/
+uploads/
+static/outputs/
+*.obj
+*.ply
+*.tif
+*.tiff
+
+# Local IDE artifacts
+.vscode/
+.idea/
+tempCodeRunnerFile.py
+

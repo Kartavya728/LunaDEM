@@ -1,0 +1,7 @@
+pixel_size_m: 2.0
+constraints:
+  max_slope_deg: 12.0
+  max_roughness_m: 1.2
+  hazard_height_m: 0.8
+  hazard_window: 5
+  min_safe_area_px: 64

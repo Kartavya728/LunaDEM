@@ -1,0 +1,21 @@
+illumination:
+  sun_azimuth_deg: 101.55
+  sun_elevation_deg: 34.8
+sensor:
+  spacecraft_altitude_km: 95.85
+  focal_length_mm: 140.0
+  detector_pixel_width_um: 7.0
+georeference:
+  crs: "+proj=longlat +a=1737400 +b=1737400 +no_defs"
+  projection: "IAU_MOON"
+sfs:
+  regularization_lambda: 0.005
+  max_iterations: 120
+  multiscale_levels: 3
+output:
+  output_dir: "output"
+  base_name: "yaml_run"
+  save_geotiff: true
+  save_obj: true
+  save_ply: false
+  save_visualizations: true

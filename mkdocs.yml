@@ -1,0 +1,22 @@
+site_name: LunarDEM
+site_description: Digital Elevation Model generation from planetary imagery
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Theory: theory.md
+  - API: api.md
+  - CLI: cli.md
+  - Examples: examples.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
