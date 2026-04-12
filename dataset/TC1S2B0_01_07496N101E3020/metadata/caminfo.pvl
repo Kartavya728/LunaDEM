@@ -1,0 +1,154 @@
+Object = Caminfo
+  Object = Parameters
+    Program     = caminfo
+    IsisVersion = "7.2.0  | 2023-03-14"
+    RunDate     = 2023-08-23T19:23:53
+    IsisId      = KAGUYA/TC1/2009-06-07T14:42:29.795174
+    From        = TC1S2B0_01_07496N101E3020.l1.cub
+    Lines       = 4656
+    Samples     = 3208
+    Bands       = 1
+  End_Object
+
+  Object = Statistics
+    MeanValue         = 7.0922596294628
+    StandardDeviation = 1.1980608542859
+    MinimumValue      = 0.364
+    MaximumValue      = 23.127
+    PercentHIS        = 0.0
+    PercentHRS        = 0.0
+    PercentLIS        = 0.0
+    PercentLRS        = 0.0
+    PercentNull       = 0.0
+    TotalPixels       = 14936448.0
+  End_Object
+
+  Object = Geometry
+    BandsUsed                  = 1
+    ReferenceBand              = 1
+    OriginalBand               = 1
+    Target                     = MOON
+    StartTime                  = 2009-06-07T14:42:29.7334032
+    EndTime                    = 2009-06-07T14:42:59.9971379
+    CenterLine                 = 2328.0
+    CenterSample               = 1604.0
+    CenterLatitude             = 10.098298476461
+    CenterLongitude            = 301.98870165723
+    CenterRadius               = 1735668.4514944
+    RightAscension             = 185.23284789065
+    Declination                = -30.648349769027
+    UpperLeftLongitude         = 301.57734617422
+    UpperLeftLatitude          = 10.87506868325
+    LowerLeftLongitude         = 301.56983974287
+    LowerLeftLatitude          = 9.3171779819068
+    LowerRightLongitude        = 302.39453133936
+    LowerRightLatitude         = 9.3200444382856
+    UpperRightLongitude        = 302.41076564806
+    UpperRightLatitude         = 10.877385395957
+    PhaseAngle                 = 62.443355099717
+    EmissionAngle              = 17.55479313031
+    IncidenceAngle             = 62.728050511112
+    NorthAzimuth               = 269.36710352449
+    OffNadir                   = 16.793317920741
+    SolarLongitude             = 136.95857727931
+    LocalTime                  = 7.8345318019949
+    TargetCenterDistance       = 1811.9482694575
+    SlantDistance              = 79.837934391493
+    SampleResolution           = 7.7138100861346
+    LineResolution             = 7.7138100861346
+    PixelResolution            = 7.7138100861346
+    MeanGroundResolution       = 7.7885365378977
+    SubSolarAzimuth            = 3.4853878726841
+    SubSolarGroundAzimuth      = 93.978527429258
+    SubSolarLatitude           = 1.1247471285253
+    SubSolarLongitude          = 4.4707246273095
+    SubSpacecraftAzimuth       = 281.98257929245
+    SubSpacecraftGroundAzimuth = 9.4903517173276
+    SubSpacecraftLatitude      = 10.849326503865
+    SubSpacecraftLongitude     = 302.11653622455
+    ParallaxX                  = -0.31202072900245
+    ParallaxY                  = 0.052160350511302
+    ShadowX                    = 0.13458798226039
+    ShadowY                    = 1.935119370898
+    HasLongitudeBoundary       = FALSE
+    HasNorthPole               = FALSE
+    HasSouthPole               = FALSE
+    ObliqueSampleResolution    = 8.0760875364187
+    ObliqueLineResolution      = 8.0760875364187
+    ObliquePixelResolution     = 8.0760875364187
+    ObliqueDetectorResolution  = 8.0760875364187
+  End_Object
+
+  Object = Polygon
+    CentroidLine      = 2327.1295099153
+    CentroidSample    = 1601.9311856773
+    CentroidLatitude  = 10.098592423224
+    CentroidLongitude = 301.98817007037
+    CentroidRadius    = 1735668.8411423 <meters>
+    SurfaceArea       = 1169.6344603618 <km^2>
+    GlobalCoverage    = 0.00309 <percent>
+    SampleIncrement   = 393
+    LineIncrement     = 393
+    GisFootprint      = "MULTIPOLYGON (((301.5772350624147293
+                         10.8752329896407289, 301.6798473709611699
+                         10.8760009926281089, 301.7820462724744175
+                         10.8763404942321422, 301.8842824669645211
+                         10.8768167927237087, 301.9864368343518777
+                         10.8771941922309185, 302.0885310731117670
+                         10.8777110301055941, 302.1905074968706231
+                         10.8778286335549801, 302.2924599611773147
+                         10.8776971498059698, 302.3944132947785874
+                         10.8775910083472027, 302.4108956784727411
+                         10.8774120481969572, 302.4095403015206784
+                         10.7460061189164957, 302.4081898121028757
+                         10.6145310286362875, 302.4068546863394999
+                         10.4831925106268606, 302.4055676451933437
+                         10.3516652512146603, 302.4043678307336336
+                         10.2197408130382925, 302.4028709729334992
+                         10.0885150822833207, 302.4013838072270346
+                         9.9571169150910634, 302.3999056618760619
+                         9.8257638030060850, 302.3984310317964059
+                         9.6943012901750922, 302.3970060132110120
+                         9.5629509292538728, 302.3957509792026599
+                         9.4312031819754925, 302.3946389203218814
+                         9.3198750833810653, 302.2936134110906892
+                         9.3198593788107846, 302.1927173412885281
+                         9.3197289978230042, 302.0917705471111958
+                         9.3195420148974151, 301.9907373887625113
+                         9.3190904552815912, 301.8896254948858768
+                         9.3185912776428346, 301.7883849820477735
+                         9.3179054179474168, 301.6872155635304011
+                         9.3174875219688200, 301.5859545053455122
+                         9.3169320406627971, 301.5697114692588343
+                         9.3171513762134559, 301.5700015736631485
+                         9.4483574184715255, 301.5707800249304000
+                         9.5801220237760720, 301.5715903131666096
+                         9.7118822989798073, 301.5723344990054784
+                         9.8433923967608212, 301.5730916886150226
+                         9.9749402957491693, 301.5738334139966810
+                         10.1064576432367765, 301.5745463249620570
+                         10.2380625822598663, 301.5752160596678095
+                         10.3696789323935228, 301.5757494955809079
+                         10.5011509910012375, 301.5762227524454033
+                         10.6326461498995961, 301.5768203489957386
+                         10.7641185052305541, 301.5772350624147293
+                         10.8752329896407289)))"
+
+    Group = Mapping
+      TargetName         = MOON
+      EquatorialRadius   = 1737400.0 <meters>
+      PolarRadius        = 1737400.0 <meters>
+      LatitudeType       = Planetocentric
+      LongitudeDirection = PositiveEast
+      LongitudeDomain    = 360
+      MinimumLatitude    = 9.3167090804397
+      MaximumLatitude    = 10.87786367379
+      MinimumLongitude   = 301.5696882467
+      MaximumLongitude   = 302.41089713613
+      PixelResolution    = 7.6800827619874
+      ProjectionName     = Sinusoidal
+      CenterLongitude    = 301.98870165723
+    End_Group
+  End_Object
+End_Object
+End

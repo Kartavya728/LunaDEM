@@ -1,8 +1,8 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import numpy as np
 
-from lunardem.geometry.lighting import get_light_vector
+from lunadem.geometry.lighting import get_light_vector
 
 
 def test_light_vector_is_unit_length() -> None:

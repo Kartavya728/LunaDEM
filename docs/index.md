@@ -1,6 +1,6 @@
-# LunarDEM
+﻿# lunadem
 
-LunarDEM is a scientific Python package for DEM generation from planetary imagery.
+lunadem is a scientific Python package for DEM generation from planetary imagery.
 
 Core capabilities:
 

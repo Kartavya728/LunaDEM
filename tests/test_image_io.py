@@ -1,8 +1,8 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import numpy as np
 
-from lunardem.io.image import load_image
+from lunadem.io.image import load_image
 
 
 def test_load_image_normalized_range(synthetic_image_path) -> None:

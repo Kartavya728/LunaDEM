@@ -1,9 +1,9 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import pytest
 from pydantic import ValidationError
 
-from lunardem.core.config import AnalysisConfig, IlluminationConfig
+from lunadem.core.config import AnalysisConfig, IlluminationConfig
 
 
 def test_invalid_illumination_raises() -> None:

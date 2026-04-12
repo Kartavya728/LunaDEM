@@ -1,6 +1,6 @@
-"""Basic LunarDEM API example."""
+﻿"""Basic lunadem API example."""
 
-from lunardem import ReconstructionConfig, generate_dem
+from lunadem import ReconstructionConfig, generate_dem
 
 
 def main() -> None:

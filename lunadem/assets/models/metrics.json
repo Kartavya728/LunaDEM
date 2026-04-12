@@ -1,0 +1,68 @@
+{
+  "models": {
+    "illumination_cnn": {
+      "targets": [
+        "sun_azimuth_deg",
+        "sun_elevation_deg"
+      ],
+      "target_mean": [
+        95.42551553134183,
+        7.837696158357428
+      ],
+      "target_std": [
+        1.765783127778215,
+        0.0025777154974959333
+      ],
+      "patch_size": 96,
+      "metrics": {
+        "sun_azimuth_deg_mae": 1.5308172837641665,
+        "sun_elevation_deg_mae": 0.0021846665246087285
+      }
+    },
+    "view_geometry_cnn": {
+      "targets": [
+        "off_nadir_deg",
+        "view_azimuth_deg"
+      ],
+      "target_mean": [
+        17.462463467731055,
+        269.3472987707828
+      ],
+      "target_std": [
+        0.10816299581538621,
+        0.05707129759149034
+      ],
+      "patch_size": 96,
+      "metrics": {
+        "off_nadir_deg_mae": 0.10520738243194433,
+        "view_azimuth_deg_mae": 0.05126359436722004
+      }
+    },
+    "scene_context_cnn": {
+      "targets": [
+        "gsd_m",
+        "centroid_lat_deg",
+        "centroid_lon_deg"
+      ],
+      "target_mean": [
+        7.738465607773173,
+        12.931824924878264,
+        -57.4799741992838
+      ],
+      "target_std": [
+        0.0923081588453764,
+        3.464056435684881,
+        0.5101035949044646
+      ],
+      "patch_size": 96,
+      "metrics": {
+        "gsd_m_mae": 0.08083646025075823,
+        "centroid_lat_deg_mae": 3.000343860339204,
+        "centroid_lon_deg_mae": 0.5092168532984355
+      }
+    }
+  },
+  "scene_count": 18,
+  "patches_per_scene": 16,
+  "note": "This file provides baseline packaged statistics and is replaced by trained ONNX exports when the metadata training pipeline is run in a healthy Python environment."
+}

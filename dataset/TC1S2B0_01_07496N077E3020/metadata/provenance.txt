@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>moon/kaguya/terrain_camera/monoscopic/uncontrolled/TC1S2B0_01_07496N077E3020/provenance.txt</Key><RequestId>VMMG8XA5TVW28HWT</RequestId><HostId>v12xKCNewn41I4crWMMH017lutzJeyZ6G40n3jBvzSxxQbIOlui4ZFlJMk/oOf4WRKEwr1JwMpfJCEn7PFuODQ==</HostId></Error>

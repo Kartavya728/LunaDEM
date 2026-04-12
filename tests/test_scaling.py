@@ -1,9 +1,9 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import numpy as np
 
-from lunardem.core.config import SensorConfig
-from lunardem.geometry.scaling import pixel_scale_meters, scale_dem_to_meters
+from lunadem.core.config import SensorConfig
+from lunadem.geometry.scaling import pixel_scale_meters, scale_dem_to_meters
 
 
 def test_pixel_scale_positive() -> None:

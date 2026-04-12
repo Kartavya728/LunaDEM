@@ -1,6 +1,6 @@
-"""Backward-compatible shims for legacy imports.
+﻿"""Backward-compatible shims for legacy imports.
 
-Deprecated: use `lunardem` package directly.
+Deprecated: use `lunadem` package directly.
 """
 
 from sfs_photoclinometry import core, io_handler, utils, visualization

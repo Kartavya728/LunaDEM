@@ -1,8 +1,8 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
-from lunardem.core.config import ReconstructionConfig
-from lunardem.methods.hybrid import HybridMethod
-from lunardem.methods.ml_models import MLMethod
+from lunadem.core.config import ReconstructionConfig
+from lunadem.methods.hybrid import HybridMethod
+from lunadem.methods.ml_models import MLMethod
 
 
 def test_ml_method_baseline_runs(synthetic_image) -> None:

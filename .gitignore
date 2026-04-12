@@ -9,10 +9,17 @@ __pycache__/
 .ruff_cache/
 dist/
 build/
-
+japneet.jpeg
+fun.mp3
+noor.mp4
+v2.md
 # Virtual environments
 .venv/
+.venv-work/
 venv/
+.pytest_tmp/
+pytest_work/
+temp_build/
 
 # Demo and generated outputs
 output/

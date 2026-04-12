@@ -1,13 +1,16 @@
 [build-system]
-requires = ["hatchling>=1.24.2"]
-build-backend = "hatchling.build"
+requires = [
+  "scikit-build-core>=0.10",
+  "pybind11>=2.12"
+]
+build-backend = "scikit_build_core.build"
 
 [project]
 name = "lunadem"
-version = "0.2.1"
-description = "Production-ready DEM generation toolkit for lunar and planetary imagery."
+dynamic = ["version"]
+description = "Lunar DEM generation, Kaguya scene analysis, metadata prediction, and rover-aware landing utilities."
 readme = "README.md"
-requires-python = ">=3.9,<3.13"
+requires-python = ">=3.9"
 license = { file = "LICENSE" }
 authors = [
   { name = "kartavya suryawanshi", email = "kartavya.xenon@gmail.com" }
@@ -18,7 +21,9 @@ keywords = [
   "photoclinometry",
   "lunar",
   "planetary",
-  "geospatial"
+  "stac",
+  "landing",
+  "kaguya"
 ]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -29,28 +34,43 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: C++",
   "Topic :: Scientific/Engineering :: GIS",
   "Topic :: Scientific/Engineering :: Image Processing"
 ]
 dependencies = [
-  "numpy>=1.24",
+  "numpy>=1.24,<2.1",
   "scipy>=1.10",
   "rasterio>=1.3",
   "imageio>=2.34",
+  "imageio-ffmpeg>=0.5",
+  "matplotlib>=3.8",
+  "plotly>=5.22",
+  "pygame>=2.6",
   "pydantic>=2.8",
+  "requests>=2.32",
   "typer>=0.12",
-  "PyYAML>=6.0"
+  "PyYAML>=6.0",
+  "onnxruntime>=1.18"
 ]
 
 [project.optional-dependencies]
 ml = [
-  "torch>=2.2"
+  "torch>=2.2",
+  "onnx>=1.16",
+  "scikit-learn>=1.5"
 ]
 viz = [
-  "matplotlib>=3.8"
+  "matplotlib>=3.8",
+  "plotly>=5.22"
 ]
 pds = [
   "pvl>=1.3"
+]
+native = [
+  "pybind11>=2.12",
+  "scikit-build-core>=0.10"
 ]
 docs = [
   "mkdocs>=1.6",
@@ -63,9 +83,13 @@ dev = [
   "ruff>=0.6",
   "mypy>=1.10",
   "build>=1.2",
-  "twine>=5.1",
+  "twine>=6.2",
   "wheel>=0.45",
-  "types-PyYAML>=6.0"
+  "types-PyYAML>=6.0",
+  "onnx>=1.16",
+  "scikit-learn>=1.5",
+  "pybind11>=2.12",
+  "scikit-build-core>=0.10"
 ]
 
 [project.urls]
@@ -75,15 +99,37 @@ Documentation = "https://github.com/Kartavya728/Generation-of-High-resolution-Di
 Issues = "https://github.com/Kartavya728/Generation-of-High-resolution-Digital-Elevation-Model-from-Lunar-Images-using-Photoclinometry/issues"
 
 [project.scripts]
+lunadem = "lunadem.cli:main"
 lunardem = "lunardem.cli:main"
-lunadem = "lunardem.cli:lunadem_main"
-kartavya = "lunardem.cli:kartavya_main"
-babies = "lunardem.cli:babies_main"
-noor = "lunardem.cli:noor_main"
-overkill = "lunardem.cli:overkill_main"
+kartavya = "lunadem.cli:kartavya_main"
+babies = "lunadem.cli:babies_main"
+noor = "lunadem.cli:noor_main"
+overkill = "lunadem.cli:overkill_main"
 
-[tool.hatch.build.targets.wheel]
-packages = ["lunardem", "sfs_photoclinometry"]
+[tool.scikit-build]
+cmake.version = ">=3.20"
+wheel.packages = ["lunadem", "lunardem", "sfs_photoclinometry"]
+sdist.include = [
+  "lunadem/**",
+  "lunardem/**",
+  "sfs_photoclinometry/**",
+  "native/**",
+  "tools/**",
+  "README.md",
+  "LICENSE",
+  "setup.py",
+  "pyproject.toml",
+  "CMakeLists.txt",
+  "run.md",
+  "sfs.md",
+  "lunar_data.md",
+  "update.md"
+]
+
+[tool.scikit-build.metadata.version]
+provider = "regex"
+input = "lunadem/__init__.py"
+regex = "__version__ = \"(?P<value>[^\"]+)\""
 
 [tool.pytest.ini_options]
 minversion = "8.0"

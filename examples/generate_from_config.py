@@ -1,7 +1,7 @@
-"""Generate DEM with external YAML/JSON config."""
+﻿"""Generate DEM with external YAML/JSON config."""
 
-from lunardem import ReconstructionConfig, generate_dem
-from lunardem.utils.config import load_config_file
+from lunadem import ReconstructionConfig, generate_dem
+from lunadem.utils.config import load_config_file
 
 
 def main() -> None:

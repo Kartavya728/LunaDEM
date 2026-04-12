@@ -1,4 +1,4 @@
-"""Deprecated Flask demo app.
+﻿"""Deprecated Flask demo app.
 
 This app is intentionally lightweight and kept under examples.
 Library users should prefer the Python API or CLI.
@@ -8,14 +8,14 @@ from __future__ import annotations
 
 from flask import Flask, jsonify, request
 
-from lunardem import ReconstructionConfig, generate_dem
+from lunadem import ReconstructionConfig, generate_dem
 
 app = Flask(__name__)
 
 
 @app.get("/")
 def health() -> dict[str, str]:
-    return {"status": "ok", "message": "LunarDEM example web app"}
+    return {"status": "ok", "message": "lunadem example web app"}
 
 
 @app.post("/generate")

@@ -1,41 +1,14 @@
-"""LunarDEM public package API."""
+﻿"""Backward compatibility package for lunardem."""
 
-from lunardem.core.api import analyze_dem, assess_landing, generate_dem
-from lunardem.core.config import (
-    AnalysisConfig,
-    GeoreferenceConfig,
-    HybridMethodConfig,
-    IlluminationConfig,
-    LandingConfig,
-    LandingConstraints,
-    MLMethodConfig,
-    OutputConfig,
-    PreprocessingConfig,
-    ReconstructionConfig,
-    SFSMethodConfig,
-    SensorConfig,
+from __future__ import annotations
+
+import warnings
+
+warnings.warn(
+    "'lunardem' is deprecated; use 'lunadem' instead.",
+    DeprecationWarning,
+    stacklevel=2,
 )
-from lunardem.core.models import DEMResult, LandingReport, TerrainMetrics
 
-__all__ = [
-    "AnalysisConfig",
-    "DEMResult",
-    "GeoreferenceConfig",
-    "HybridMethodConfig",
-    "IlluminationConfig",
-    "LandingConfig",
-    "LandingConstraints",
-    "LandingReport",
-    "MLMethodConfig",
-    "OutputConfig",
-    "PreprocessingConfig",
-    "ReconstructionConfig",
-    "SFSMethodConfig",
-    "SensorConfig",
-    "TerrainMetrics",
-    "analyze_dem",
-    "assess_landing",
-    "generate_dem",
-]
-
-__version__ = "0.1.1"
+from lunadem import *  # noqa: F401,F403
+from lunadem import __all__, __version__  # noqa: F401

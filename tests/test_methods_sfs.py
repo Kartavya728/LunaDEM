@@ -1,7 +1,7 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
-from lunardem.core.config import ReconstructionConfig
-from lunardem.methods.sfs import SFSMethod
+from lunadem.core.config import ReconstructionConfig
+from lunadem.methods.sfs import SFSMethod
 
 
 def test_sfs_method_runs_on_synthetic_image(synthetic_image) -> None:

@@ -1,10 +1,10 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import numpy as np
 import pytest
 
-from lunardem.core.config import GeoreferenceConfig
-from lunardem.io.raster import save_dem_as_geotiff
+from lunadem.core.config import GeoreferenceConfig
+from lunadem.io.raster import save_dem_as_geotiff
 
 rasterio = pytest.importorskip("rasterio")
 

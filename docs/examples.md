@@ -1,9 +1,9 @@
-# Examples
+﻿# Examples
 
 ## Python
 
 ```python
-from lunardem import ReconstructionConfig, generate_dem
+from lunadem import ReconstructionConfig, generate_dem
 
 cfg = ReconstructionConfig(output={"output_dir": "output", "base_name": "demo"})
 result = generate_dem("data/moon1.png", method="multiscale_sfs", config=cfg)
@@ -13,7 +13,7 @@ print(result.exports)
 ## CLI + YAML
 
 ```bash
-lunardem generate data/moon1.png --method hybrid --config examples/configs/reconstruction.yaml
+lunadem generate data/moon1.png --method hybrid --config examples/configs/reconstruction.yaml
 ```
 
 ## Legacy web demo

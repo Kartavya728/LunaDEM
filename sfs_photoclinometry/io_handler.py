@@ -1,4 +1,4 @@
-"""Legacy compatibility wrappers for IO helpers."""
+﻿"""Legacy compatibility wrappers for IO helpers."""
 
 from __future__ import annotations
 
@@ -6,10 +6,10 @@ from typing import Any, Dict
 
 import numpy as np
 
-from lunardem.core.config import GeoreferenceConfig
-from lunardem.io.image import load_image as _load_image
-from lunardem.io.mesh import save_dem_as_obj as _save_dem_as_obj
-from lunardem.io.raster import save_dem_as_geotiff as _save_dem_as_geotiff
+from lunadem.core.config import GeoreferenceConfig
+from lunadem.io.image import load_image as _load_image
+from lunadem.io.mesh import save_dem_as_obj as _save_dem_as_obj
+from lunadem.io.raster import save_dem_as_geotiff as _save_dem_as_geotiff
 
 
 def load_image(image_path: str) -> np.ndarray:

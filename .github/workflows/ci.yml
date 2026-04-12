@@ -1,4 +1,4 @@
-name: CI
+﻿name: CI
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
       - name: Lint
         run: ruff check .
       - name: Type check
-        run: mypy lunardem
+        run: mypy lunadem
       - name: Tests
         run: pytest
       - name: Build package

@@ -1,7 +1,7 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
-from lunardem.core.config import ReconstructionConfig
-from lunardem.methods.multiscale import MultiScaleSFSMethod
+from lunadem.core.config import ReconstructionConfig
+from lunadem.methods.multiscale import MultiScaleSFSMethod
 
 
 def test_multiscale_method_runs(synthetic_image) -> None:

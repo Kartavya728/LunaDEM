@@ -1,4 +1,4 @@
-"""Legacy compatibility wrappers for core SFS functions."""
+﻿"""Legacy compatibility wrappers for core SFS functions."""
 
 from __future__ import annotations
 
@@ -6,9 +6,9 @@ from typing import Any, Dict
 
 import numpy as np
 
-from lunardem.core.config import ReconstructionConfig
-from lunardem.geometry.scaling import scale_dem_to_meters as _scale_dem_to_meters
-from lunardem.methods.sfs import run_sfs_optimization as _run_sfs_optimization
+from lunadem.core.config import ReconstructionConfig
+from lunadem.geometry.scaling import scale_dem_to_meters as _scale_dem_to_meters
+from lunadem.methods.sfs import run_sfs_optimization as _run_sfs_optimization
 
 
 def _legacy_to_config(config: Dict[str, Any]) -> ReconstructionConfig:

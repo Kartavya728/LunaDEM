@@ -1,6 +1,3 @@
-"""Terrain analytics and landing suitability."""
+﻿"""Backward compatibility shim for lunadem.landing.__init__."""
 
-from lunardem.landing.analysis import compute_terrain_metrics
-from lunardem.landing.suitability import assess_landing_suitability
-
-__all__ = ["assess_landing_suitability", "compute_terrain_metrics"]
+from lunadem.landing.__init__ import *  # noqa: F401,F403

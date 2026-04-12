@@ -1,5 +1,3 @@
-"""Visualization helpers."""
+﻿"""Backward compatibility shim for lunadem.visualization.__init__."""
 
-from lunardem.visualization.plots import plot_3d_surface, plot_depth_map
-
-__all__ = ["plot_depth_map", "plot_3d_surface"]
+from lunadem.visualization.__init__ import *  # noqa: F401,F403

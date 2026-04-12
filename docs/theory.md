@@ -1,8 +1,8 @@
-# Theory
+﻿# Theory
 
 ## Shape from Shading (SFS)
 
-LunarDEM uses Lambertian reflectance with smoothness regularization:
+lunadem uses Lambertian reflectance with smoothness regularization:
 
 - brightness residual between observed and predicted image
 - Laplacian smoothness prior on the recovered surface

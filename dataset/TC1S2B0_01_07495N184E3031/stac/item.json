@@ -1,0 +1,474 @@
+{
+    "type": "Feature",
+    "stac_version": "1.0.0",
+    "id": "TC1S2B0_01_07495N184E3031",
+    "properties": {
+        "start_datetime": "2009-06-07T12:47:15.295081Z",
+        "end_datetime": "2009-06-07T12:47:45.558815Z",
+        "title": "TC1S2B0_01_07495N184E3031",
+        "description": "This is a Kaguya (SELENE) Terrain Camera (TC) observation acquired and released by the Japanese Aerospace Exploration Agency (JAXA).",
+        "missions": [
+            "Selenological and Engineering Explorer (SELENE)"
+        ],
+        "instruments": [
+            "Kaguya/SELENE Terrain Camera (TC)"
+        ],
+        "gsd": 7.8599041947122,
+        "license": "CC0-1.0",
+        "proj:epsg": null,
+        "proj:wkt2": "PROJCRS[\"Moon(2015)-Sphere/Ocentric/Equirectangular,clon=180\",BASEGEODCRS[\"Moon(2015)-Sphere/Ocentric\",DATUM[\"Moon(2015)-Sphere\",ELLIPSOID[\"Moon(2015)-Sphere\",1737400,0,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"ReferenceMeridian\",0,ANGLEUNIT[\"degree\",0.0174532925199433]]],CONVERSION[\"Equirectangular,clon=180\",METHOD[\"EquidistantCylindrical\",ID[\"EPSG\",1028]],PARAMETER[\"Latitudeof1ststandardparallel\",0,ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8823]],PARAMETER[\"Longitudeofnaturalorigin\",180,ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8802]],PARAMETER[\"Falseeasting\",0,LENGTHUNIT[\"metre\",1],ID[\"EPSG\",8806]],PARAMETER[\"Falsenorthing\",0,LENGTHUNIT[\"metre\",1],ID[\"EPSG\",8807]]],CS[Cartesian,2],AXIS[\"(E)\",east,ORDER[1],LENGTHUNIT[\"metre\",1]],AXIS[\"(N)\",north,ORDER[2],LENGTHUNIT[\"metre\",1]],ID[\"IAU\",30115,2015]]",
+        "proj:projjson": {
+            "$schema": "https://proj.org/schemas/v0.7/projjson.schema.json",
+            "type": "ProjectedCRS",
+            "name": "Moon (2015) - Sphere / Ocentric / Equirectangular, clon = 180",
+            "base_crs": {
+                "name": "Moon (2015) - Sphere / Ocentric",
+                "datum": {
+                    "type": "GeodeticReferenceFrame",
+                    "name": "Moon (2015) - Sphere",
+                    "ellipsoid": {
+                        "name": "Moon (2015) - Sphere",
+                        "radius": 1737400
+                    },
+                    "prime_meridian": {
+                        "name": "Reference Meridian",
+                        "longitude": 0
+                    }
+                },
+                "coordinate_system": {
+                    "subtype": "ellipsoidal",
+                    "axis": [
+                        {
+                            "name": "Geodetic latitude",
+                            "abbreviation": "Lat",
+                            "direction": "north",
+                            "unit": "degree"
+                        },
+                        {
+                            "name": "Geodetic longitude",
+                            "abbreviation": "Lon",
+                            "direction": "east",
+                            "unit": "degree"
+                        }
+                    ]
+                },
+                "id": {
+                    "authority": "IAU",
+                    "code": 30100,
+                    "version": 2015
+                },
+                "remarks": "Source of IAU Coordinate systems: https://doi.org/10.1007/s10569-017-9805-5"
+            },
+            "conversion": {
+                "name": "Equirectangular, clon = 180",
+                "method": {
+                    "name": "Equidistant Cylindrical",
+                    "id": {
+                        "authority": "EPSG",
+                        "code": 1028
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "Latitude of 1st standard parallel",
+                        "value": 0,
+                        "unit": "degree",
+                        "id": {
+                            "authority": "EPSG",
+                            "code": 8823
+                        }
+                    },
+                    {
+                        "name": "Longitude of natural origin",
+                        "value": 180,
+                        "unit": "degree",
+                        "id": {
+                            "authority": "EPSG",
+                            "code": 8802
+                        }
+                    },
+                    {
+                        "name": "False easting",
+                        "value": 0,
+                        "unit": "metre",
+                        "id": {
+                            "authority": "EPSG",
+                            "code": 8806
+                        }
+                    },
+                    {
+                        "name": "False northing",
+                        "value": 0,
+                        "unit": "metre",
+                        "id": {
+                            "authority": "EPSG",
+                            "code": 8807
+                        }
+                    }
+                ]
+            },
+            "coordinate_system": {
+                "subtype": "Cartesian",
+                "axis": [
+                    {
+                        "name": "Easting",
+                        "abbreviation": "E",
+                        "direction": "east",
+                        "unit": "metre"
+                    },
+                    {
+                        "name": "Northing",
+                        "abbreviation": "N",
+                        "direction": "north",
+                        "unit": "metre"
+                    }
+                ]
+            },
+            "id": {
+                "authority": "IAU",
+                "code": 30115,
+                "version": 2015
+            }
+        },
+        "proj:bbox": [
+            -57.36544314157567,
+            17.62887242375987,
+            -56.46872607965429,
+            19.193568373003345
+        ],
+        "proj:centroid": {
+            "lat": 18.41372130650954,
+            "lon": -56.92009919913005
+        },
+        "proj:shape": [
+            6038,
+            3460
+        ],
+        "proj:transform": [
+            3718685.7325064,
+            7.8599041947122,
+            0,
+            582025.90561844,
+            0,
+            -7.8599041947122
+        ],
+        "cube:dimensions": {
+            "x": {
+                "type": "spatial",
+                "axis": "x",
+                "extent": [
+                    -57.36544314157567,
+                    -56.46872607965429
+                ]
+            },
+            "y": {
+                "type": "spatial",
+                "axis": "y",
+                "extent": [
+                    17.62887242375987,
+                    19.193568373003345
+                ]
+            }
+        },
+        "view:off_nadir": 17.322638346524,
+        "view:azimuth": 269.26967570886,
+        "view:sun_azimuth": 98.211343406201,
+        "view:sun_elevation": 7.8422504341238,
+        "ssys:targets": [
+            "Moon"
+        ],
+        "datetime": "2009-06-07T12:47:15.295081Z",
+        "created": "2023-08-23T19:26:06.699Z",
+        "updated": "2023-11-03T05:49:29.337Z"
+    },
+    "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [
+                    -57.355338799698984,
+                    19.193568373003345
+                ],
+                [
+                    -57.246172711981785,
+                    19.193394333667893
+                ],
+                [
+                    -57.13746169861713,
+                    19.19281064973993
+                ],
+                [
+                    -57.02899948984924,
+                    19.191636246837472
+                ],
+                [
+                    -56.92038065162126,
+                    19.190789054410967
+                ],
+                [
+                    -56.811815665834104,
+                    19.1898371753661
+                ],
+                [
+                    -56.70330814278077,
+                    19.188579420396756
+                ],
+                [
+                    -56.59480297548777,
+                    19.187130167671864
+                ],
+                [
+                    -56.48625802141896,
+                    19.18562719551996
+                ],
+                [
+                    -56.46872607965429,
+                    19.185267694031452
+                ],
+                [
+                    -56.47053805494255,
+                    19.053810783390354
+                ],
+                [
+                    -56.47235866034481,
+                    18.922344179728487
+                ],
+                [
+                    -56.47428629511626,
+                    18.791193429139977
+                ],
+                [
+                    -56.47622134222655,
+                    18.660053635741313
+                ],
+                [
+                    -56.478072794281786,
+                    18.528718737779
+                ],
+                [
+                    -56.47970063525264,
+                    18.39695734025435
+                ],
+                [
+                    -56.481521816116356,
+                    18.26570093518552
+                ],
+                [
+                    -56.48335186258885,
+                    18.13459163534154
+                ],
+                [
+                    -56.485042525719166,
+                    18.003162327897947
+                ],
+                [
+                    -56.48672267416498,
+                    17.871626337173552
+                ],
+                [
+                    -56.48845409963445,
+                    17.740165755055024
+                ],
+                [
+                    -56.489930527771776,
+                    17.62887242375987
+                ],
+                [
+                    -56.59721804567249,
+                    17.630544183047537
+                ],
+                [
+                    -56.704290777455526,
+                    17.632110293595126
+                ],
+                [
+                    -56.81131723154681,
+                    17.633738192611897
+                ],
+                [
+                    -56.91834703694656,
+                    17.634813779534696
+                ],
+                [
+                    -57.025593627543515,
+                    17.635194211466327
+                ],
+                [
+                    -57.133178172741225,
+                    17.635165044214972
+                ],
+                [
+                    -57.24062491693314,
+                    17.635746815469638
+                ],
+                [
+                    -57.348080781180215,
+                    17.636362583503033
+                ],
+                [
+                    -57.36544314157567,
+                    17.636603023750183
+                ],
+                [
+                    -57.36481457069533,
+                    17.767835546909424
+                ],
+                [
+                    -57.36383671837194,
+                    17.89947347301516
+                ],
+                [
+                    -57.36305173541223,
+                    18.030907195910483
+                ],
+                [
+                    -57.36230615089022,
+                    18.16227459208493
+                ],
+                [
+                    -57.361491227396016,
+                    18.293717152609517
+                ],
+                [
+                    -57.36074415925174,
+                    18.42499461732813
+                ],
+                [
+                    -57.359924894577546,
+                    18.556349737826913
+                ],
+                [
+                    -57.35900127832366,
+                    18.68780959928979
+                ],
+                [
+                    -57.35793643295074,
+                    18.819439770098327
+                ],
+                [
+                    -57.35699890566747,
+                    18.950936532811028
+                ],
+                [
+                    -57.35609550170585,
+                    19.082381504437706
+                ],
+                [
+                    -57.355338799698984,
+                    19.193568373003345
+                ]
+            ]
+        ]
+    },
+    "links": [
+        {
+            "rel": "self",
+            "type": "application/geo+json",
+            "href": "https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/kaguya_terrain_camera_monoscopic_uncontrolled_observations/items/TC1S2B0_01_07495N184E3031"
+        },
+        {
+            "rel": "parent",
+            "type": "application/json",
+            "href": "https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/kaguya_terrain_camera_monoscopic_uncontrolled_observations"
+        },
+        {
+            "rel": "collection",
+            "type": "application/json",
+            "href": "https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/kaguya_terrain_camera_monoscopic_uncontrolled_observations"
+        },
+        {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod"
+        }
+    ],
+    "assets": {
+        "thumbnail": {
+            "href": "https://astrogeo-ard.s3-us-west-2.amazonaws.com/moon/kaguya/terrain_camera/monoscopic/uncontrolled/TC1S2B0_01_07495N184E3031/TC1S2B0_01_07495N184E3031.jpg",
+            "type": "image/jpeg",
+            "title": "Image Thumbnail",
+            "roles": [
+                "thumbnail"
+            ]
+        },
+        "image": {
+            "href": "https://astrogeo-ard.s3-us-west-2.amazonaws.com/moon/kaguya/terrain_camera/monoscopic/uncontrolled/TC1S2B0_01_07495N184E3031/TC1S2B0_01_07495N184E3031.tif",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Uncontrolled Image",
+            "raster:bands": [
+                {
+                    "nodata": -32768,
+                    "data_type": "int16",
+                    "spatial_resolution": 7.8599041947122,
+                    "statistics": {
+                        "minimum": 28,
+                        "maximum": 1987,
+                        "mean": 513.19896043345,
+                        "stddev": 81.278287783013,
+                        "valid_percent": 97.7
+                    },
+                    "unit": "",
+                    "scale": 0.013,
+                    "offset": 0
+                }
+            ],
+            "roles": [
+                "data"
+            ]
+        },
+        "provenance": {
+            "href": "https://astrogeo-ard.s3-us-west-2.amazonaws.com/moon/kaguya/terrain_camera/monoscopic/uncontrolled/TC1S2B0_01_07495N184E3031/provenance.txt",
+            "type": "text/plain",
+            "title": "Provenance",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "isis_label": {
+            "href": "https://astrogeo-ard.s3-us-west-2.amazonaws.com/moon/kaguya/terrain_camera/monoscopic/uncontrolled/TC1S2B0_01_07495N184E3031/TC1S2B0_01_07495N184E3031.isis.lbl",
+            "type": "text/plain",
+            "title": "ISIS Label",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "pds_label": {
+            "href": "https://astrogeo-ard.s3-us-west-2.amazonaws.com/moon/kaguya/terrain_camera/monoscopic/uncontrolled/TC1S2B0_01_07495N184E3031/TC1S2B0_01_07495N184E3031.lbl",
+            "type": "text/plain",
+            "title": "JAXA PDS3 Label",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "caminfo_pvl": {
+            "href": "https://astrogeo-ard.s3-us-west-2.amazonaws.com/moon/kaguya/terrain_camera/monoscopic/uncontrolled/TC1S2B0_01_07495N184E3031/TC1S2B0_01_07495N184E3031.caminfo.pvl",
+            "type": "text/plain",
+            "title": "CamInfo Output",
+            "roles": [
+                "metadata"
+            ]
+        },
+        "usgscsm_isd": {
+            "href": "https://astrogeo-ard.s3-us-west-2.amazonaws.com/moon/kaguya/terrain_camera/monoscopic/uncontrolled/TC1S2B0_01_07495N184E3031/TC1S2B0_01_07495N184E3031.isd.json",
+            "type": "text/plain",
+            "title": "USGSCSM ISD",
+            "roles": [
+                "metadata"
+            ]
+        }
+    },
+    "bbox": [
+        -57.36544314157567,
+        17.62887242375987,
+        -56.46872607965429,
+        19.193568373003345
+    ],
+    "stac_extensions": [
+        "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/datacube/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+        "https://raw.githubusercontent.com/thareUSGS/ssys/main/json-schema/schema.json",
+        "https://stac-extensions.github.io/raster/v1.0.0/schema.json"
+    ],
+    "collection": "kaguya_terrain_camera_monoscopic_uncontrolled_observations"
+}
