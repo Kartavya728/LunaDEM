@@ -34,21 +34,21 @@ py::array_t<float> hazard_map(py::array_t<float, py::array::c_style | py::array:
         throw std::runtime_error("window must be positive.");
     }
     auto input = dem.unchecked<2>();
-    const ssize_t rows = input.shape(0);
-    const ssize_t cols = input.shape(1);
+    const py::ssize_t rows = input.shape(0);
+    const py::ssize_t cols = input.shape(1);
     const int radius = window / 2;
 
     auto output = py::array_t<float>({rows, cols});
     auto result = output.mutable_unchecked<2>();
 
-    for (ssize_t row = 0; row < rows; ++row) {
-        for (ssize_t col = 0; col < cols; ++col) {
+    for (py::ssize_t row = 0; row < rows; ++row) {
+        for (py::ssize_t col = 0; col < cols; ++col) {
             float local_min = input(row, col);
             float local_max = input(row, col);
             for (int dy = -radius; dy <= radius; ++dy) {
-                const ssize_t yy = std::min<ssize_t>(std::max<ssize_t>(row + dy, 0), rows - 1);
+                const py::ssize_t yy = std::min<py::ssize_t>(std::max<py::ssize_t>(row + dy, 0), rows - 1);
                 for (int dx = -radius; dx <= radius; ++dx) {
-                    const ssize_t xx = std::min<ssize_t>(std::max<ssize_t>(col + dx, 0), cols - 1);
+                    const py::ssize_t xx = std::min<py::ssize_t>(std::max<py::ssize_t>(col + dx, 0), cols - 1);
                     const float value = input(yy, xx);
                     if (value < local_min) {
                         local_min = value;

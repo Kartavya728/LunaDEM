@@ -7,21 +7,24 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from lunadem.branding import add_matplotlib_credit
+
 
 def plot_depth_map(dem: np.ndarray, save_path: str | Path) -> str:
     """Generate and save 2D terrain map."""
     out = Path(save_path)
     out.parent.mkdir(parents=True, exist_ok=True)
-    plt.figure(figsize=(10, 8))
-    plt.imshow(dem, cmap="terrain")
-    plt.title("Reconstructed DEM")
-    plt.xlabel("X (pixels)")
-    plt.ylabel("Y (pixels)")
-    cbar = plt.colorbar()
+    fig, ax = plt.subplots(figsize=(10, 8))
+    image = ax.imshow(dem, cmap="terrain")
+    ax.set_title("Reconstructed DEM")
+    ax.set_xlabel("X (pixels)")
+    ax.set_ylabel("Y (pixels)")
+    cbar = fig.colorbar(image, ax=ax)
     cbar.set_label("Height (m)")
-    plt.tight_layout()
-    plt.savefig(out, dpi=150)
-    plt.close()
+    add_matplotlib_credit(fig)
+    fig.tight_layout()
+    fig.savefig(out, dpi=150)
+    plt.close(fig)
     return str(out)
 
 
@@ -52,7 +55,8 @@ def plot_3d_surface(dem: np.ndarray, save_path: str | Path) -> str:
     ax.set_zlabel("Height (m)")
     ax.set_box_aspect((width, height, max(1.0, 0.2 * max(width, height))))
     fig.colorbar(surf, shrink=0.6, aspect=10, label="Height (m)")
-    plt.tight_layout()
-    plt.savefig(out, dpi=150)
-    plt.close()
+    add_matplotlib_credit(fig)
+    fig.tight_layout()
+    fig.savefig(out, dpi=150)
+    plt.close(fig)
     return str(out)

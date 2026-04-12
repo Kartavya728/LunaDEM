@@ -8,6 +8,7 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
 
+from lunadem.branding import add_plotly_credit
 from lunadem.core.models import KaguyaScene, LandingSiteResult
 from lunadem.datasets.kaguya import load_kaguya_scene
 from lunadem.geometry.planetary import MOON_RADIUS_M
@@ -64,6 +65,7 @@ def plot_3d_surface_interactive(
         scene={"xaxis_title": "Column (px)", "yaxis_title": "Row (px)", "zaxis_title": "Height / intensity"},
         margin={"l": 0, "r": 0, "b": 0, "t": 40},
     )
+    add_plotly_credit(figure)
     _save_html(figure, save_path)
     return figure
 
@@ -99,6 +101,7 @@ def plot_landing_site_2d(
         )
     )
     figure.update_layout(title=title, xaxis_title="Column (px)", yaxis_title="Row (px)", yaxis={"autorange": "reversed"})
+    add_plotly_credit(figure)
     _save_html(figure, save_path)
     return figure
 
@@ -143,6 +146,7 @@ def plot_landing_site_3d(
         scene={"xaxis_title": "Column (px)", "yaxis_title": "Row (px)", "zaxis_title": "Height / intensity"},
         margin={"l": 0, "r": 0, "b": 0, "t": 40},
     )
+    add_plotly_credit(figure)
     _save_html(figure, save_path)
     return figure
 
@@ -192,5 +196,6 @@ def plot_scene_geometry_3d(
         scene={"xaxis_title": "X (km)", "yaxis_title": "Y (km)", "zaxis_title": "Z (km)", "aspectmode": "data"},
         margin={"l": 0, "r": 0, "b": 0, "t": 40},
     )
+    add_plotly_credit(figure)
     _save_html(figure, save_path)
     return figure

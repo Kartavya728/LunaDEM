@@ -19,7 +19,8 @@ except Exception:  # pragma: no cover - only used in broken runtime environments
     np = None  # type: ignore[assignment]
 
 import lunadem as api
-from lunadem import __version__
+from lunadem import TEST_SCENE_ID, __version__, download_test_scene
+from lunadem.branding import CREATOR_GITHUB_ID, CREATOR_NAME, add_matplotlib_credit
 from lunadem.core.config import AnalysisConfig, LandingConfig, ReconstructionConfig
 from lunadem.utils.config import load_config_file
 
@@ -96,6 +97,7 @@ def _show_babies_image(block: bool = True) -> None:
     ax.imshow(image)
     ax.set_title("babies")
     ax.axis("off")
+    add_matplotlib_credit(fig)
     plt.tight_layout()
     if block:
         plt.show()
@@ -120,6 +122,7 @@ def _show_noor_video(block: bool = True) -> None:
     first_frame = next(frame_iter)
     image_plot = ax.imshow(first_frame)
     ax.set_title("noor")
+    add_matplotlib_credit(fig)
     plt.tight_layout()
     plt.show(block=False)
     plt.pause(0.1)
@@ -224,8 +227,8 @@ def download_command(
     if not test:
         raise typer.BadParameter("Only --test is currently supported.")
     payload = {
-        "scene_id": api.TEST_SCENE_ID,
-        "downloads": api.download_test_scene(output_dir=output, overwrite=overwrite),
+        "scene_id": TEST_SCENE_ID,
+        "downloads": download_test_scene(output_dir=output, overwrite=overwrite),
     }
     _echo_json(payload)
 
@@ -401,6 +404,18 @@ def overkill_main() -> None:
     _show_babies_image(block=False)
     _show_noor_video(block=True)
     audio_worker.join()
+
+
+def creator_main() -> None:
+    """Print creator identity details."""
+    parser = argparse.ArgumentParser(prog="creator", description="Show creator details.")
+    parser.add_argument("--info", action="store_true", help="Print full creator details.")
+    args = parser.parse_args()
+    if args.info:
+        print(CREATOR_NAME)
+        print(CREATOR_GITHUB_ID)
+        return
+    print(CREATOR_GITHUB_ID)
 
 
 def main() -> None:

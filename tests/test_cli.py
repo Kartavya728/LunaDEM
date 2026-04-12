@@ -74,6 +74,25 @@ def test_lunadem_main_delegates_to_typer_app(monkeypatch) -> None:
     assert called["prog_name"] == "lunadem"
 
 
+def test_creator_main_prints_github_id(monkeypatch, capsys) -> None:
+    monkeypatch.setattr(cli.sys, "argv", ["creator"])
+
+    cli.creator_main()
+
+    assert capsys.readouterr().out.strip() == "Kartavya728"
+
+
+def test_creator_main_prints_info(monkeypatch, capsys) -> None:
+    monkeypatch.setattr(cli.sys, "argv", ["creator", "--info"])
+
+    cli.creator_main()
+
+    assert capsys.readouterr().out.strip().splitlines() == [
+        "Kartavya Mahesh Suryawanshi",
+        "Kartavya728",
+    ]
+
+
 def test_sfs_maths_command_runs() -> None:
     result = runner.invoke(app, ["sfs", "--maths"])
     assert result.exit_code == 0

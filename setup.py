@@ -88,6 +88,7 @@ setup(
         "console_scripts": [
             "lunadem=lunadem.cli:main",
             "lunardem=lunardem.cli:main",
+            "creator=lunadem.cli:creator_main",
             "kartavya=lunadem.cli:kartavya_main",
             "babies=lunadem.cli:babies_main",
             "noor=lunadem.cli:noor_main",

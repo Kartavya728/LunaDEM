@@ -7,7 +7,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "lunadem"
-dynamic = ["version"]
+version = "0.3.0"
 description = "Lunar DEM generation, Kaguya scene analysis, metadata prediction, and rover-aware landing utilities."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -101,6 +101,7 @@ Issues = "https://github.com/Kartavya728/Generation-of-High-resolution-Digital-E
 [project.scripts]
 lunadem = "lunadem.cli:main"
 lunardem = "lunardem.cli:main"
+creator = "lunadem.cli:creator_main"
 kartavya = "lunadem.cli:kartavya_main"
 babies = "lunadem.cli:babies_main"
 noor = "lunadem.cli:noor_main"
@@ -125,11 +126,6 @@ sdist.include = [
   "lunar_data.md",
   "update.md"
 ]
-
-[tool.scikit-build.metadata.version]
-provider = "regex"
-input = "lunadem/__init__.py"
-regex = "__version__ = \"(?P<value>[^\"]+)\""
 
 [tool.pytest.ini_options]
 minversion = "8.0"
