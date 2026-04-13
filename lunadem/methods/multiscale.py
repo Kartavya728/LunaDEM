@@ -9,7 +9,7 @@ from scipy.ndimage import zoom
 
 from lunadem.core.config import ReconstructionConfig
 from lunadem.methods.base import MethodResult, ReconstructionMethod
-from lunadem.methods.sfs import run_sfs_optimization
+from lunadem.methods.sfs import _prepare_working_surface, run_sfs_optimization
 
 
 def _build_pyramid(image: np.ndarray, levels: int, factor: float) -> List[np.ndarray]:
@@ -39,11 +39,15 @@ class MultiScaleSFSMethod(ReconstructionMethod):
         config: ReconstructionConfig,
         initial_dem: np.ndarray | None = None,
     ) -> MethodResult:
+        original_shape = image.shape
+        working_image, resample_scale = _prepare_working_surface(image, config)
         levels = config.sfs.multiscale_levels
         factor = config.sfs.downscale_factor
-        pyramid = _build_pyramid(image, levels=levels, factor=factor)
+        pyramid = _build_pyramid(working_image, levels=levels, factor=factor)
 
         dem = initial_dem
+        if dem is not None and dem.shape != working_image.shape:
+            dem = _resize_dem(dem.astype(np.float32), working_image.shape)
         level_diagnostics: List[Dict[str, float | str | bool]] = []
         for level_index, level_image in enumerate(pyramid, start=1):
             if dem is not None:
@@ -58,11 +62,20 @@ class MultiScaleSFSMethod(ReconstructionMethod):
             diagnostics["width"] = float(level_image.shape[1])
             level_diagnostics.append(diagnostics)
 
+        if dem is not None and dem.shape != original_shape:
+            dem = _resize_dem(dem, original_shape)
+
         return MethodResult(
             dem=dem.astype(np.float32),
             diagnostics={
                 "levels": float(levels),
                 "downscale_factor": float(factor),
+                "original_height": float(original_shape[0]),
+                "original_width": float(original_shape[1]),
+                "working_height": float(working_image.shape[0]),
+                "working_width": float(working_image.shape[1]),
+                "resample_scale": float(resample_scale),
+                "used_working_resolution": bool(resample_scale != 1.0),
                 "per_level": level_diagnostics,
             },
         )

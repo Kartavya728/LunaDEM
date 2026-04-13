@@ -112,6 +112,25 @@ def test_download_test_command(monkeypatch, tmp_path: Path) -> None:
     assert "image" in payload["downloads"]
 
 
+def test_plot_scene_command_runs(tmp_path: Path) -> None:
+    result = runner.invoke(
+        app,
+        [
+            "plot-scene",
+            "TC1S2B0_01_07496N087E3020",
+            "--backend",
+            "plotly",
+            "--no-show",
+            "--output-html",
+            str(tmp_path / "scene.html"),
+        ],
+    )
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["scene_id"] == "TC1S2B0_01_07496N087E3020"
+    assert payload["output_html"].endswith("scene.html")
+
+
 def test_lunardem_compatibility_import() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)

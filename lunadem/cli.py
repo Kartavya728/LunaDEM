@@ -239,15 +239,8 @@ def scene_summary_command(
     camera: Optional[Path] = typer.Option(None, "--camera", "-c", help="Optional camera.json path."),
 ) -> None:
     """Summarize a local Kaguya scene and derive metadata values."""
-    item = api.load_stac_item(scene)
     camera_model = api.load_camera_model(camera) if camera is not None else api.load_camera_model(scene)
-    geometry = api.summarize_scene_metadata(item, camera_model)
-    payload = {
-        "scene_id": item["id"],
-        "geometry": geometry,
-        "properties": item.get("properties", {}),
-    }
-    _echo_json(payload)
+    _echo_json(api.build_scene_summary(scene, camera_model=camera_model))
 
 
 @app.command("predict")
@@ -279,6 +272,10 @@ def landing_site_command(
     rover: str = typer.Option("pragyan", "--rover", "-r", help="Built-in rover preset name."),
     scene: Optional[str] = typer.Option(None, "--scene", "-s", help="Optional local scene ID or scene folder."),
     method: str = typer.Option("hybrid", "--method", "-m", help="Reconstruction method for image inputs."),
+    backend: str = typer.Option("both", "--backend", "-b", help="matplotlib, plotly, or both."),
+    show: bool = typer.Option(True, "--show/--no-show", help="Display the plots while also supporting save output."),
+    output_2d_png: Optional[Path] = typer.Option(None, "--output-2d", help="Optional 2D Matplotlib plot output."),
+    output_3d_png: Optional[Path] = typer.Option(None, "--output-3d", help="Optional 3D Matplotlib plot output."),
     output_2d_html: Optional[Path] = typer.Option(None, "--output-2d-html", help="Optional 2D landing plot HTML output."),
     output_3d_html: Optional[Path] = typer.Option(None, "--output-3d-html", help="Optional 3D landing plot HTML output."),
 ) -> None:
@@ -286,13 +283,29 @@ def landing_site_command(
     scene_obj = api.load_kaguya_scene(scene) if scene else None
     result = api.find_safe_landing_site(input_path, rover=rover, scene=scene_obj, method=method)
 
-    outputs: Dict[str, Optional[str]] = {"plot_2d_html": None, "plot_3d_html": None}
-    if output_2d_html is not None:
-        api.plot_landing_site_2d(input_path, result, save_path=output_2d_html)
-        outputs["plot_2d_html"] = str(output_2d_html)
-    if output_3d_html is not None:
-        api.plot_landing_site_3d(input_path, result, save_path=output_3d_html)
-        outputs["plot_3d_html"] = str(output_3d_html)
+    api.plot_landing_site_2d(
+        input_path,
+        result,
+        backend=backend,
+        show=show,
+        save_path=output_2d_png,
+        html_path=output_2d_html,
+    )
+    api.plot_landing_site_3d(
+        input_path,
+        result,
+        backend=backend,
+        show=show,
+        save_path=output_3d_png,
+        html_path=output_3d_html,
+    )
+
+    outputs: Dict[str, Optional[str]] = {
+        "plot_2d_png": str(output_2d_png) if output_2d_png is not None else None,
+        "plot_3d_png": str(output_3d_png) if output_3d_png is not None else None,
+        "plot_2d_html": str(output_2d_html) if output_2d_html is not None else None,
+        "plot_3d_html": str(output_3d_html) if output_3d_html is not None else None,
+    }
 
     payload = {"landing_site": result, "outputs": outputs}
     _echo_json(payload)
@@ -301,12 +314,81 @@ def landing_site_command(
 @app.command("plot-scene")
 def plot_scene_command(
     scene: str = typer.Argument(TEST_SCENE_ID, help="Scene ID or scene directory."),
-    output_html: Path = typer.Option(Path("scene_geometry.html"), "--output-html", "-o", help="HTML output path."),
+    backend: str = typer.Option("both", "--backend", "-b", help="matplotlib, plotly, or both."),
+    show: bool = typer.Option(True, "--show/--no-show", help="Display the scene plot."),
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Optional Matplotlib figure output path."),
+    output_html: Optional[Path] = typer.Option(Path("scene_geometry.html"), "--output-html", help="Optional Plotly HTML output path."),
 ) -> None:
     """Render Moon, footprint, camera, sun, and Earth in 3D."""
     scene_obj = api.load_kaguya_scene(scene)
-    api.plot_scene_geometry_3d(scene_obj, save_path=output_html)
-    _echo_json({"scene_id": scene_obj.scene_id, "output_html": output_html})
+    api.plot_scene_geometry_3d(
+        scene_obj,
+        backend=backend,
+        show=show,
+        save_path=output,
+        html_path=output_html,
+    )
+    api.plot_moon_surface_3d(
+        scene_obj,
+        backend=backend,
+        show=False,
+        save_path=output.with_name(f"{output.stem}_moon{output.suffix}") if output is not None else None,
+        html_path=output_html.with_name(f"{output_html.stem}_moon{output_html.suffix}") if output_html is not None else None,
+    )
+    _echo_json(
+        {
+            "scene_id": scene_obj.scene_id,
+            "backend": backend,
+            "output": str(output) if output is not None else None,
+            "output_html": str(output_html) if output_html is not None else None,
+        }
+    )
+
+
+@app.command("plot-surface")
+def plot_surface_command(
+    input_path: Path = typer.Argument(..., exists=True, help="Image, TIFF, or DEM path."),
+    backend: str = typer.Option("both", "--backend", "-b", help="matplotlib, plotly, or both."),
+    show: bool = typer.Option(True, "--show/--no-show", help="Display the surface plot."),
+    reconstruct: bool = typer.Option(False, "--reconstruct", help="Run DEM reconstruction before plotting."),
+    method: str = typer.Option("hybrid", "--method", "-m", help="Reconstruction method when --reconstruct is used."),
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Optional Matplotlib figure output path."),
+    output_html: Optional[Path] = typer.Option(Path("surface_plot.html"), "--output-html", help="Optional Plotly HTML output path."),
+) -> None:
+    """Plot a terrain surface from an image or DEM using Matplotlib, Plotly, or both."""
+    surface_input: Any = input_path
+    if reconstruct:
+        reconstruction = ReconstructionConfig(
+            output={
+                "output_dir": "output",
+                "base_name": "plot_surface",
+                "save_geotiff": False,
+                "save_obj": False,
+                "save_ply": False,
+                "save_visualizations": False,
+                "save_interactive_html": False,
+                "save_manifest": False,
+            }
+        )
+        surface_input = api.generate_dem(input_path, method=method, config=reconstruction).dem_meters
+
+    if backend in {"matplotlib", "both"}:
+        api.plot_3d_surface(surface_input, save_path=output, show=show)
+    if backend in {"plotly", "both"}:
+        api.plot_3d_surface_interactive(
+            surface_input,
+            save_path=output_html if backend == "plotly" else (output_html or Path("surface_plot.html")),
+            show=show and backend == "plotly",
+        )
+
+    _echo_json(
+        {
+            "backend": backend,
+            "reconstructed": reconstruct,
+            "output": str(output) if output is not None else None,
+            "output_html": str(output_html) if output_html is not None else None,
+        }
+    )
 
 
 def _print_lunadem_terminal_docs() -> None:
@@ -331,10 +413,10 @@ def _print_lunadem_terminal_docs() -> None:
         capability_table.add_column("Area", style="cyan", width=24)
         capability_table.add_column("Details", style="white")
         capability_table.add_row("DEM Methods", "sfs, multiscale_sfs, ml, hybrid")
-        capability_table.add_row("Metadata", "scene summary, STAC/camera derivations, packaged CNN predictors")
-        capability_table.add_row("Landing", "safe mask, rover-aware site selection, interactive plots")
-        capability_table.add_row("Visualization", "Plotly surface, landing, Moon/footprint geometry")
-        capability_table.add_row("Data", "download --test, local Kaguya scene loaders")
+        capability_table.add_row("Metadata", "scene summary, STAC/camera derivations, packaged ONNX predictors")
+        capability_table.add_row("Landing", "safe mask, rover-aware site selection, plotting in 2D and 3D")
+        capability_table.add_row("Visualization", "Matplotlib + Plotly surface, Moon, landing, and space geometry")
+        capability_table.add_row("Data", "download --test, local Kaguya scene loaders, 40+ callable APIs")
         console.print(capability_table)
 
         command_table = Table(title="Primary CLI Commands", show_header=True, header_style="bold green")
@@ -345,6 +427,8 @@ def _print_lunadem_terminal_docs() -> None:
         command_table.add_row("lunadem sfs --maths", "Show shape-from-shading theory")
         command_table.add_row("lunadem predict", "Run bundled metadata CNNs")
         command_table.add_row("lunadem landing-site", "Select the safest rover landing spot")
+        command_table.add_row("lunadem plot-surface", "Show a DEM or image as a 3D surface")
+        command_table.add_row("lunadem plot-scene", "Show Moon, footprint, camera, sun, and Earth")
         command_table.add_row("lunadem download --test", "Download the official test scene")
         console.print(command_table)
         console.print("[dim]Compatibility alias also available:[/dim] [bold]lunardem[/bold]")
@@ -352,7 +436,7 @@ def _print_lunadem_terminal_docs() -> None:
         print("lunadem - DEM Toolkit")
         print(f"Installed version: {__version__}")
         print(f"PyPI: {PYPI_PROJECT_URL}")
-        print("Commands: generate | scene-summary | sfs | predict | landing-site | download --test")
+        print("Commands: generate | scene-summary | sfs | predict | landing-site | plot-surface | plot-scene | download --test")
         print("Compatibility alias: lunardem")
 
 

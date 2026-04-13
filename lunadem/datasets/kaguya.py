@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import asdict, is_dataclass
 from pathlib import Path
 from typing import Any, Dict, Mapping, MutableMapping
 
@@ -28,6 +29,29 @@ TEST_SCENE_ID = "TC1S2B0_01_07496N087E3020"
 
 def _load_json(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _json_ready(value: Any) -> Any:
+    if is_dataclass(value):
+        return _json_ready(asdict(value))
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, dict):
+        return {str(key): _json_ready(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_ready(item) for item in value]
+    return value
+
+
+def _geometry_from_input(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> SceneGeometry:
+    if isinstance(scene_or_geometry_or_item, SceneGeometry):
+        return scene_or_geometry_or_item
+    if isinstance(scene_or_geometry_or_item, KaguyaScene):
+        return scene_or_geometry_or_item.geometry
+    return summarize_scene_metadata(scene_or_geometry_or_item, camera_model)
 
 
 def _resolve_scene_dir(scene_id_or_path: str | Path, dataset_root: str | Path = DEFAULT_DATASET_ROOT) -> Path:
@@ -199,6 +223,174 @@ def load_kaguya_scene(
     )
 
 
+def list_kaguya_scenes(dataset_root: str | Path = DEFAULT_DATASET_ROOT) -> list[str]:
+    """Return sorted local scene identifiers available under the dataset root."""
+    root = Path(dataset_root)
+    if not root.exists():
+        return []
+    return sorted(scene_dir.name for scene_dir in root.iterdir() if scene_dir.is_dir())
+
+
+def scene_geometry_to_dict(geometry: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path) -> Dict[str, Any]:
+    """Convert a scene geometry object into a JSON-ready dictionary."""
+    resolved = _geometry_from_input(geometry)
+    return _json_ready(resolved)
+
+
+def get_scene_centroid(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> tuple[float | None, float | None]:
+    """Return the centroid latitude and longitude in degrees."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return geometry.centroid_lat_deg, geometry.centroid_lon_deg
+
+
+def get_scene_bbox(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> tuple[float, float, float, float] | None:
+    """Return the geographic bounding box for the scene."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return geometry.bbox_deg
+
+
+def get_scene_ground_coverage(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> tuple[float | None, float | None]:
+    """Return ground coverage as (height_m, width_m)."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return geometry.ground_height_m, geometry.ground_width_m
+
+
+def get_scene_ground_area_km2(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> float | None:
+    """Return the derived ground area covered by the scene in square kilometers."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return geometry.ground_area_km2
+
+
+def get_scene_transform(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> tuple[float, ...] | None:
+    """Return the projected transform tuple when present."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return geometry.transform
+
+
+def get_scene_sun_vector(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> np.ndarray | None:
+    """Return the normalized sun vector derived from scene metadata."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return None if geometry.sun_vector is None else np.asarray(geometry.sun_vector, dtype=np.float32)
+
+
+def get_scene_view_angles(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> Dict[str, float | None]:
+    """Return view-angle metadata in degrees."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return {
+        "view_azimuth_deg": geometry.view_azimuth_deg,
+        "off_nadir_deg": geometry.off_nadir_deg,
+    }
+
+
+def get_scene_camera_summary(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> Dict[str, Any]:
+    """Return a compact summary of camera path and pose metadata."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return {
+        "mean_camera_position_km": _json_ready(geometry.mean_camera_position_km),
+        "mean_camera_velocity_km_s": _json_ready(geometry.mean_camera_velocity_km_s),
+        "mean_camera_distance_km": geometry.mean_camera_distance_km,
+        "camera_path_length_km": geometry.camera_path_length_km,
+    }
+
+
+def get_scene_sun_summary(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> Dict[str, Any]:
+    """Return a compact summary of sun geometry metadata."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return {
+        "sun_vector": _json_ready(geometry.sun_vector),
+        "mean_sun_position_km": _json_ready(geometry.mean_sun_position_km),
+        "mean_sun_distance_km": geometry.mean_sun_distance_km,
+    }
+
+
+def get_scene_footprint_lonlat(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> list[tuple[float, float]]:
+    """Return the scene footprint polygon in longitude/latitude."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return list(geometry.footprint_lonlat)
+
+
+def get_scene_footprint_xyz(
+    scene_or_geometry_or_item: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> list[tuple[float, float, float]]:
+    """Return the scene footprint polygon in Moon-centered Cartesian coordinates."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    return list(geometry.footprint_xyz_m)
+
+
+def get_scene_time_range(item: Mapping[str, Any] | str | Path) -> tuple[str | None, str | None]:
+    """Return the scene acquisition time range from the STAC item."""
+    resolved = load_stac_item(item) if not isinstance(item, Mapping) else item
+    properties = resolved.get("properties", {})
+    return properties.get("start_datetime"), properties.get("end_datetime")
+
+
+def build_scene_summary(
+    scene_or_geometry_or_item: KaguyaScene | SceneGeometry | Mapping[str, Any] | str | Path,
+    camera_model: Mapping[str, Any] | str | Path | None = None,
+) -> Dict[str, Any]:
+    """Build a JSON-ready summary of the scene metadata and derived geometry."""
+    geometry = _geometry_from_input(scene_or_geometry_or_item, camera_model)
+    if isinstance(scene_or_geometry_or_item, KaguyaScene):
+        scene_id = scene_or_geometry_or_item.scene_id
+        item = scene_or_geometry_or_item.stac_item
+    elif isinstance(scene_or_geometry_or_item, SceneGeometry):
+        scene_id = None
+        item = None
+    else:
+        item = load_stac_item(scene_or_geometry_or_item) if not isinstance(scene_or_geometry_or_item, Mapping) else scene_or_geometry_or_item
+        scene_id = item.get("id")
+
+    start_datetime, end_datetime = (None, None) if item is None else get_scene_time_range(item)
+    return {
+        "scene_id": scene_id,
+        "start_datetime": start_datetime,
+        "end_datetime": end_datetime,
+        "geometry": scene_geometry_to_dict(geometry),
+        "centroid": {
+            "lat_deg": geometry.centroid_lat_deg,
+            "lon_deg": geometry.centroid_lon_deg,
+        },
+        "ground_coverage_m": {
+            "height_m": geometry.ground_height_m,
+            "width_m": geometry.ground_width_m,
+        },
+        "camera": get_scene_camera_summary(geometry),
+        "sun": get_scene_sun_summary(geometry),
+        "view_angles": get_scene_view_angles(geometry),
+    }
+
+
 def get_test_scene_manifest(dataset_root: str | Path = DEFAULT_DATASET_ROOT) -> Dict[str, Any]:
     """Return the local manifest for the packaged reference scene."""
     scene = load_kaguya_scene(TEST_SCENE_ID, dataset_root=dataset_root)
@@ -219,7 +411,7 @@ def get_test_scene_manifest(dataset_root: str | Path = DEFAULT_DATASET_ROOT) -> 
             }
             for key, value in assets.items()
         },
-        "geometry": scene.geometry,
+        "geometry": scene_geometry_to_dict(scene.geometry),
     }
 
 

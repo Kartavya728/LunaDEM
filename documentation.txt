@@ -1,0 +1,3614 @@
+lunadem Documentation
+=====================
+
+This file is generated from the current installed `lunadem` package.
+It is intended to be a long-form reference manual for the full public API.
+
+SECTION 1: INSTALLATION
+-----------------------
+1. Install the base package with `pip install lunadem`.
+2. Install ML extras with `pip install "lunadem[ml]"` when retraining or exporting models.
+3. Install visualization extras with `pip install "lunadem[viz]"` for explicit plotting dependencies.
+4. Install development extras with `pip install "lunadem[dev]"` when running tests, builds, and release checks.
+5. Canonical import name is `lunadem`.
+6. Compatibility import `lunardem` still exists but is deprecated.
+
+SECTION 2: MAJOR CAPABILITIES
+-----------------------------
+A. DEM generation from image input using shape-from-shading, multi-scale SFS, ML baseline, and hybrid blending.
+B. Kaguya scene loading from STAC and camera metadata.
+C. Derived lunar geometry helpers for centroid, bbox, sun, camera, transforms, and coverage.
+D. Offline metadata prediction from packaged ONNX artifacts.
+E. Rover-aware landing-site scoring and visualization.
+F. Dual plotting backends with Matplotlib for visible local rendering and Plotly for hoverable 3D output.
+G. Reference-scene downloading and packaged theory docs for SFS.
+
+SECTION 3: CLI REFERENCE
+------------------------
+Command: lunadem generate
+Purpose: reconstruct a DEM from an input image or TIFF.
+Command: lunadem analyze
+Purpose: compute terrain metrics from an existing DEM.
+Command: lunadem landing
+Purpose: assess landing safety from an existing DEM.
+Command: lunadem scene-summary
+Purpose: summarize STAC and camera metadata and derive geometric values.
+Command: lunadem predict
+Purpose: run the bundled metadata estimators.
+Command: lunadem sfs --maths
+Purpose: print the SFS mathematics reference.
+Command: lunadem sfs --terms
+Purpose: print the SFS terminology reference.
+Command: lunadem sfs --assumptions
+Purpose: print the SFS assumptions reference.
+Command: lunadem plot-surface
+Purpose: visualize a local terrain surface in 3D.
+Command: lunadem plot-scene
+Purpose: visualize Moon, footprint, camera, Sun, and Earth geometry.
+Command: lunadem landing-site
+Purpose: locate the safest rover landing site and plot it.
+Command: lunadem download --test
+Purpose: download the official packaged test scene.
+
+SECTION 4: PACKAGED MODEL METRICS
+---------------------------------
+Bundled metadata model metrics:
+- Scene count: 18
+- Patches per scene: 16
+- Package note: real_onnx_models
+- Model: illumination_cnn
+  Targets: sun_azimuth_deg, sun_elevation_deg
+  sun_azimuth_deg_mae: 1.608062
+  sun_elevation_deg_mae: 0.002216
+- Model: view_geometry_cnn
+  Targets: off_nadir_deg, view_azimuth_deg
+  off_nadir_deg_mae: 0.105210
+  view_azimuth_deg_mae: 0.051268
+- Model: scene_context_cnn
+  Targets: gsd_m, centroid_lat_deg, centroid_lon_deg
+  gsd_m_mae: 0.082854
+  centroid_lat_deg_mae: 3.149079
+  centroid_lon_deg_mae: 0.509205
+
+SECTION 5: PUBLIC FUNCTION REFERENCE
+------------------------------------
+Function 1: acquisition_duration_seconds
+Import: from lunadem import acquisition_duration_seconds
+Source module: lunadem.geometry.conversions
+Signature: acquisition_duration_seconds(start_datetime: 'str', end_datetime: 'str') -> 'float'
+Summary: Compute acquisition duration in seconds from ISO timestamps.
+Full docstring:
+Compute acquisition duration in seconds from ISO timestamps.
+Parameter details:
+- Name: start_datetime
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str
+  Default: <required>
+- `start_datetime`: user-provided argument.
+- Name: end_datetime
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str
+  Default: <required>
+- `end_datetime`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import acquisition_duration_seconds
+    result = acquisition_duration_seconds(...)
+    print(result)
+Related notes:
+- `acquisition_duration_seconds` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 2: analyze_dem
+Import: from lunadem import analyze_dem
+Source module: lunadem.core.api
+Signature: analyze_dem(dem_or_path: 'np.ndarray | str | Path', analysis_config: 'AnalysisConfig | Dict[str, Any] | None' = None) -> 'TerrainMetrics'
+Summary: Analyze an existing DEM.
+Full docstring:
+Analyze an existing DEM.
+Parameter details:
+- Name: dem_or_path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray | str | Path
+  Default: <required>
+- `dem_or_path`: user-provided argument.
+- `dem_or_path` is typically a height map or terrain-like array.
+- `dem_or_path` should point to a writable path on disk when saving output is desired.
+- Name: analysis_config
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: AnalysisConfig | Dict[str, Any] | None
+  Default: None
+- `analysis_config`: user-provided argument.
+- `analysis_config` accepts a typed config model or a compatible mapping.
+Return annotation: TerrainMetrics
+Usage example:
+    from lunadem import analyze_dem
+    result = analyze_dem(...)
+    print(result)
+Related notes:
+- `analyze_dem` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 3: assess_landing
+Import: from lunadem import assess_landing
+Source module: lunadem.core.api
+Signature: assess_landing(dem_or_path: 'np.ndarray | str | Path', landing_config: 'LandingConfig | Dict[str, Any] | None' = None, analysis_config: 'AnalysisConfig | Dict[str, Any] | None' = None) -> 'LandingReport'
+Summary: Assess landing suitability for a DEM.
+Full docstring:
+Assess landing suitability for a DEM.
+Parameter details:
+- Name: dem_or_path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray | str | Path
+  Default: <required>
+- `dem_or_path`: user-provided argument.
+- `dem_or_path` is typically a height map or terrain-like array.
+- `dem_or_path` should point to a writable path on disk when saving output is desired.
+- Name: landing_config
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: LandingConfig | Dict[str, Any] | None
+  Default: None
+- `landing_config`: user-provided argument.
+- `landing_config` accepts a typed config model or a compatible mapping.
+- Name: analysis_config
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: AnalysisConfig | Dict[str, Any] | None
+  Default: None
+- `analysis_config`: user-provided argument.
+- `analysis_config` accepts a typed config model or a compatible mapping.
+Return annotation: LandingReport
+Usage example:
+    from lunadem import assess_landing
+    result = assess_landing(...)
+    print(result)
+Related notes:
+- `assess_landing` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 4: bbox_area_deg2
+Import: from lunadem import bbox_area_deg2
+Source module: lunadem.geometry.conversions
+Signature: bbox_area_deg2(bbox: 'Sequence[float]') -> 'float'
+Summary: Approximate angular area of a lon/lat bbox in square degrees.
+Full docstring:
+Approximate angular area of a lon/lat bbox in square degrees.
+Parameter details:
+- Name: bbox
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Sequence[float]
+  Default: <required>
+- `bbox`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import bbox_area_deg2
+    result = bbox_area_deg2(...)
+    print(result)
+Related notes:
+- `bbox_area_deg2` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 5: bbox_area_km2
+Import: from lunadem import bbox_area_km2
+Source module: lunadem.geometry.conversions
+Signature: bbox_area_km2(bbox: 'Sequence[float]', lat_center_deg: 'float', radius_m: 'float' = 1737400.0) -> 'float'
+Summary: Approximate lunar surface area of a lon/lat bbox in square kilometers.
+Full docstring:
+Approximate lunar surface area of a lon/lat bbox in square kilometers.
+Parameter details:
+- Name: bbox
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Sequence[float]
+  Default: <required>
+- `bbox`: user-provided argument.
+- Name: lat_center_deg
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `lat_center_deg`: user-provided argument.
+- Name: radius_m
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: 1737400.0
+- `radius_m`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import bbox_area_km2
+    result = bbox_area_km2(...)
+    print(result)
+Related notes:
+- `bbox_area_km2` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 6: build_scene_summary
+Import: from lunadem import build_scene_summary
+Source module: lunadem.datasets.kaguya
+Signature: build_scene_summary(scene_or_geometry_or_item: 'KaguyaScene | SceneGeometry | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'Dict[str, Any]'
+Summary: Build a JSON-ready summary of the scene metadata and derived geometry.
+Full docstring:
+Build a JSON-ready summary of the scene metadata and derived geometry.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: KaguyaScene | SceneGeometry | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import build_scene_summary, load_kaguya_scene
+    scene = load_kaguya_scene('TC1S2B0_01_07496N087E3020')
+    summary = build_scene_summary(scene)
+    print(summary['centroid'])
+Related notes:
+- `build_scene_summary` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 7: calculate_predicted_image
+Import: from lunadem import calculate_predicted_image
+Source module: lunadem.geometry.surface
+Signature: calculate_predicted_image(height_map: 'np.ndarray', light_vec: 'np.ndarray') -> 'np.ndarray'
+Summary: Compute Lambertian reflectance image from height map.
+Full docstring:
+Compute Lambertian reflectance image from height map.
+Parameter details:
+- Name: height_map
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `height_map`: user-provided argument.
+- Name: light_vec
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `light_vec`: user-provided argument.
+Return annotation: np.ndarray
+Usage example:
+    from lunadem import calculate_predicted_image
+    result = calculate_predicted_image(...)
+    print(result)
+Related notes:
+- `calculate_predicted_image` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 8: calculate_surface_normals
+Import: from lunadem import calculate_surface_normals
+Source module: lunadem.geometry.surface
+Signature: calculate_surface_normals(height_map: 'np.ndarray') -> 'np.ndarray'
+Summary: Calculate normalized surface normals from DEM.
+Full docstring:
+Calculate normalized surface normals from DEM.
+Parameter details:
+- Name: height_map
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `height_map`: user-provided argument.
+Return annotation: np.ndarray
+Usage example:
+    from lunadem import calculate_surface_normals
+    result = calculate_surface_normals(...)
+    print(result)
+Related notes:
+- `calculate_surface_normals` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 9: cartesian_to_latlon_moon
+Import: from lunadem import cartesian_to_latlon_moon
+Source module: lunadem.geometry.conversions
+Signature: cartesian_to_latlon_moon(x_m: 'float', y_m: 'float', z_m: 'float') -> 'Tuple[float, float, float]'
+Summary: Convert Cartesian coordinates to lunar latitude/longitude and radius.
+Full docstring:
+Convert Cartesian coordinates to lunar latitude/longitude and radius.
+Parameter details:
+- Name: x_m
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `x_m`: user-provided argument.
+- Name: y_m
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `y_m`: user-provided argument.
+- Name: z_m
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `z_m`: user-provided argument.
+Return annotation: Tuple[float, float, float]
+Usage example:
+    from lunadem import cartesian_to_latlon_moon
+    result = cartesian_to_latlon_moon(...)
+    print(result)
+Related notes:
+- `cartesian_to_latlon_moon` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 10: deg_to_rad
+Import: from lunadem import deg_to_rad
+Source module: lunadem.geometry.conversions
+Signature: deg_to_rad(value_deg: 'float') -> 'float'
+Summary: Convert degrees to radians.
+Full docstring:
+Convert degrees to radians.
+Parameter details:
+- Name: value_deg
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `value_deg`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import deg_to_rad
+    result = deg_to_rad(...)
+    print(result)
+Related notes:
+- `deg_to_rad` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 11: download_test_scene
+Import: from lunadem import download_test_scene
+Source module: lunadem.datasets.kaguya
+Signature: download_test_scene(output_dir: 'str | Path', overwrite: 'bool' = False, dataset_root: 'str | Path' = WindowsPath('dataset'), timeout_s: 'float' = 60.0) -> 'Dict[str, str]'
+Summary: Download the official test scene bundle to a target directory.
+Full docstring:
+Download the official test scene bundle to a target directory.
+Parameter details:
+- Name: output_dir
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: <required>
+- `output_dir`: user-provided argument.
+- Name: overwrite
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: bool
+  Default: False
+- `overwrite`: user-provided argument.
+- Name: dataset_root
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: dataset
+- `dataset_root`: user-provided argument.
+- Name: timeout_s
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: 60.0
+- `timeout_s`: user-provided argument.
+Return annotation: Dict[str, str]
+Usage example:
+    from lunadem import download_test_scene
+    downloads = download_test_scene('downloads', overwrite=False)
+    print(downloads)
+Related notes:
+- `download_test_scene` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 12: ensure_directory
+Import: from lunadem import ensure_directory
+Source module: lunadem.utils.files
+Signature: ensure_directory(path: 'str | Path') -> 'Path'
+Summary: Create a directory when missing and return it as a Path.
+Full docstring:
+Create a directory when missing and return it as a Path.
+Parameter details:
+- Name: path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: <required>
+- `path`: user-provided argument.
+Return annotation: Path
+Usage example:
+    from lunadem import ensure_directory
+    result = ensure_directory(...)
+    print(result)
+Related notes:
+- `ensure_directory` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 13: extract_pds_geometry
+Import: from lunadem import extract_pds_geometry
+Source module: lunadem.io.pds
+Signature: extract_pds_geometry(label: 'Dict[str, Any]') -> 'Dict[str, Any]'
+Summary: Extract common geometry fields from parsed label dictionary.
+Full docstring:
+Extract common geometry fields from parsed label dictionary.
+Parameter details:
+- Name: label
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Dict[str, Any]
+  Default: <required>
+- `label`: user-provided argument.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import extract_pds_geometry
+    result = extract_pds_geometry(...)
+    print(result)
+Related notes:
+- `extract_pds_geometry` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 14: find_safe_landing_site
+Import: from lunadem import find_safe_landing_site
+Source module: lunadem.landing.sites
+Signature: find_safe_landing_site(image_or_dem: 'np.ndarray | str | Path', *, rover: 'str | RoverSpec | Mapping[str, Any] | None' = None, scene: 'Any' = None, sun: 'Any' = None, camera: 'Mapping[str, Any] | None' = None, time: 'str | None' = None, method: 'str' = 'hybrid', reconstruct: 'bool | None' = None, config: 'ReconstructionConfig | Mapping[str, Any] | None' = None, analysis_config: 'AnalysisConfig | Mapping[str, Any] | None' = None, landing_config: 'LandingConfig | Mapping[str, Any] | None' = None) -> 'LandingSiteResult'
+Summary: Find the safest landing site for a rover on an image or DEM.
+Full docstring:
+Find the safest landing site for a rover on an image or DEM.
+Parameter details:
+- Name: image_or_dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray | str | Path
+  Default: <required>
+- `image_or_dem`: user-provided argument.
+- `image_or_dem` usually accepts a NumPy array or an image/TIFF path.
+- `image_or_dem` is typically a height map or terrain-like array.
+- Name: rover
+  Kind: KEYWORD_ONLY
+  Annotation: str | RoverSpec | Mapping[str, Any] | None
+  Default: None
+- `rover`: user-provided argument.
+- Name: scene
+  Kind: KEYWORD_ONLY
+  Annotation: Any
+  Default: None
+- `scene`: user-provided argument.
+- `scene` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: sun
+  Kind: KEYWORD_ONLY
+  Annotation: Any
+  Default: None
+- `sun`: user-provided argument.
+- Name: camera
+  Kind: KEYWORD_ONLY
+  Annotation: Mapping[str, Any] | None
+  Default: None
+- `camera`: user-provided argument.
+- Name: time
+  Kind: KEYWORD_ONLY
+  Annotation: str | None
+  Default: None
+- `time`: user-provided argument.
+- Name: method
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: hybrid
+- `method`: user-provided argument.
+- Name: reconstruct
+  Kind: KEYWORD_ONLY
+  Annotation: bool | None
+  Default: None
+- `reconstruct`: user-provided argument.
+- Name: config
+  Kind: KEYWORD_ONLY
+  Annotation: ReconstructionConfig | Mapping[str, Any] | None
+  Default: None
+- `config`: user-provided argument.
+- `config` accepts a typed config model or a compatible mapping.
+- Name: analysis_config
+  Kind: KEYWORD_ONLY
+  Annotation: AnalysisConfig | Mapping[str, Any] | None
+  Default: None
+- `analysis_config`: user-provided argument.
+- `analysis_config` accepts a typed config model or a compatible mapping.
+- Name: landing_config
+  Kind: KEYWORD_ONLY
+  Annotation: LandingConfig | Mapping[str, Any] | None
+  Default: None
+- `landing_config`: user-provided argument.
+- `landing_config` accepts a typed config model or a compatible mapping.
+Return annotation: LandingSiteResult
+Usage example:
+    from lunadem import find_safe_landing_site, get_rover_spec, load_kaguya_scene
+    scene = load_kaguya_scene('TC1S2B0_01_07496N087E3020')
+    landing = find_safe_landing_site(scene.image_path, rover=get_rover_spec('pragyan'), scene=scene)
+    print(landing.summary)
+Related notes:
+- `find_safe_landing_site` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 15: generate_dem
+Import: from lunadem import generate_dem
+Source module: lunadem.core.api
+Signature: generate_dem(input_data: 'np.ndarray | str | Path', method: 'str' = 'sfs', config: 'ReconstructionConfig | Dict[str, Any] | None' = None, analysis_config: 'AnalysisConfig | Dict[str, Any] | None' = None) -> 'DEMResult'
+Summary: Generate a DEM from image input.
+Full docstring:
+Generate a DEM from image input.
+
+Parameters
+----------
+input_data:
+    Input image array or path to image file.
+method:
+    Reconstruction method name (`sfs`, `multiscale_sfs`, `ml`, `hybrid`).
+config:
+    Reconstruction configuration model or dictionary.
+analysis_config:
+    Terrain-analysis configuration model or dictionary.
+Parameter details:
+- Name: input_data
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray | str | Path
+  Default: <required>
+- `input_data`: user-provided argument.
+- Name: method
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str
+  Default: sfs
+- `method`: user-provided argument.
+- Name: config
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: ReconstructionConfig | Dict[str, Any] | None
+  Default: None
+- `config`: user-provided argument.
+- `config` accepts a typed config model or a compatible mapping.
+- Name: analysis_config
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: AnalysisConfig | Dict[str, Any] | None
+  Default: None
+- `analysis_config`: user-provided argument.
+- `analysis_config` accepts a typed config model or a compatible mapping.
+Return annotation: DEMResult
+Usage example:
+    from lunadem import ReconstructionConfig, generate_dem
+    config = ReconstructionConfig(output={'output_dir': 'output', 'base_name': 'demo'})
+    result = generate_dem('dataset/TC1S2B0_01_07496N087E3020/image/image.tif', method='hybrid', config=config)
+    print(result.dem_meters.shape)
+Related notes:
+- `generate_dem` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 16: get_light_vector
+Import: from lunadem import get_light_vector
+Source module: lunadem.geometry.lighting
+Signature: get_light_vector(sun_azimuth_deg: 'float', sun_elevation_deg: 'float') -> 'np.ndarray'
+Summary: Convert sun azimuth/elevation to a unit light vector.
+Full docstring:
+Convert sun azimuth/elevation to a unit light vector.
+
+Coordinate system: +X east, +Y north, +Z up.
+Azimuth is measured clockwise from north.
+Parameter details:
+- Name: sun_azimuth_deg
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `sun_azimuth_deg`: user-provided argument.
+- Name: sun_elevation_deg
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `sun_elevation_deg`: user-provided argument.
+Return annotation: np.ndarray
+Usage example:
+    from lunadem import get_light_vector
+    result = get_light_vector(...)
+    print(result)
+Related notes:
+- `get_light_vector` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 17: get_model_artifact_paths
+Import: from lunadem import get_model_artifact_paths
+Source module: lunadem.ml.inference
+Signature: get_model_artifact_paths() -> 'dict[str, str]'
+Summary: Return the expected packaged ONNX artifact paths.
+Full docstring:
+Return the expected packaged ONNX artifact paths.
+Parameter details:
+- This callable takes no public parameters.
+Return annotation: dict[str, str]
+Usage example:
+    from lunadem import get_model_artifact_paths
+    result = get_model_artifact_paths(...)
+    print(result)
+Related notes:
+- `get_model_artifact_paths` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 18: get_model_metrics
+Import: from lunadem import get_model_metrics
+Source module: lunadem.ml.inference
+Signature: get_model_metrics() -> 'Dict[str, Any]'
+Summary: Load packaged model metrics and scaling metadata.
+Full docstring:
+Load packaged model metrics and scaling metadata.
+Parameter details:
+- This callable takes no public parameters.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import get_model_metrics
+    result = get_model_metrics(...)
+    print(result)
+Related notes:
+- `get_model_metrics` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 19: get_model_targets
+Import: from lunadem import get_model_targets
+Source module: lunadem.ml.inference
+Signature: get_model_targets(model_name: 'str') -> 'tuple[str, ...]'
+Summary: Return the target names predicted by a given model.
+Full docstring:
+Return the target names predicted by a given model.
+Parameter details:
+- Name: model_name
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str
+  Default: <required>
+- `model_name`: user-provided argument.
+Return annotation: tuple[str, ...]
+Usage example:
+    from lunadem import get_model_targets
+    result = get_model_targets(...)
+    print(result)
+Related notes:
+- `get_model_targets` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 20: get_rover_spec
+Import: from lunadem import get_rover_spec
+Source module: lunadem.landing.rovers
+Signature: get_rover_spec(name_or_custom_dims: 'str | RoverSpec | Mapping[str, Any] | None' = None, *, length_m: 'float | None' = None, width_m: 'float | None' = None, height_m: 'float | None' = None, ground_clearance_m: 'float | None' = None, safety_margin_m: 'float | None' = None) -> 'RoverSpec'
+Summary: Return a rover spec from a known name or custom dimensions.
+Full docstring:
+Return a rover spec from a known name or custom dimensions.
+Parameter details:
+- Name: name_or_custom_dims
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | RoverSpec | Mapping[str, Any] | None
+  Default: None
+- `name_or_custom_dims`: user-provided argument.
+- Name: length_m
+  Kind: KEYWORD_ONLY
+  Annotation: float | None
+  Default: None
+- `length_m`: user-provided argument.
+- Name: width_m
+  Kind: KEYWORD_ONLY
+  Annotation: float | None
+  Default: None
+- `width_m`: user-provided argument.
+- Name: height_m
+  Kind: KEYWORD_ONLY
+  Annotation: float | None
+  Default: None
+- `height_m`: user-provided argument.
+- Name: ground_clearance_m
+  Kind: KEYWORD_ONLY
+  Annotation: float | None
+  Default: None
+- `ground_clearance_m`: user-provided argument.
+- Name: safety_margin_m
+  Kind: KEYWORD_ONLY
+  Annotation: float | None
+  Default: None
+- `safety_margin_m`: user-provided argument.
+Return annotation: RoverSpec
+Usage example:
+    from lunadem import get_rover_spec
+    result = get_rover_spec(...)
+    print(result)
+Related notes:
+- `get_rover_spec` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 21: get_scene_bbox
+Import: from lunadem import get_scene_bbox
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_bbox(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'tuple[float, float, float, float] | None'
+Summary: Return the geographic bounding box for the scene.
+Full docstring:
+Return the geographic bounding box for the scene.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: tuple[float, float, float, float] | None
+Usage example:
+    from lunadem import get_scene_bbox
+    result = get_scene_bbox(...)
+    print(result)
+Related notes:
+- `get_scene_bbox` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 22: get_scene_camera_summary
+Import: from lunadem import get_scene_camera_summary
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_camera_summary(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'Dict[str, Any]'
+Summary: Return a compact summary of camera path and pose metadata.
+Full docstring:
+Return a compact summary of camera path and pose metadata.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import get_scene_camera_summary
+    result = get_scene_camera_summary(...)
+    print(result)
+Related notes:
+- `get_scene_camera_summary` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 23: get_scene_centroid
+Import: from lunadem import get_scene_centroid
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_centroid(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'tuple[float | None, float | None]'
+Summary: Return the centroid latitude and longitude in degrees.
+Full docstring:
+Return the centroid latitude and longitude in degrees.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: tuple[float | None, float | None]
+Usage example:
+    from lunadem import get_scene_centroid
+    result = get_scene_centroid(...)
+    print(result)
+Related notes:
+- `get_scene_centroid` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 24: get_scene_footprint_lonlat
+Import: from lunadem import get_scene_footprint_lonlat
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_footprint_lonlat(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'list[tuple[float, float]]'
+Summary: Return the scene footprint polygon in longitude/latitude.
+Full docstring:
+Return the scene footprint polygon in longitude/latitude.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: list[tuple[float, float]]
+Usage example:
+    from lunadem import get_scene_footprint_lonlat
+    result = get_scene_footprint_lonlat(...)
+    print(result)
+Related notes:
+- `get_scene_footprint_lonlat` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 25: get_scene_footprint_xyz
+Import: from lunadem import get_scene_footprint_xyz
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_footprint_xyz(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'list[tuple[float, float, float]]'
+Summary: Return the scene footprint polygon in Moon-centered Cartesian coordinates.
+Full docstring:
+Return the scene footprint polygon in Moon-centered Cartesian coordinates.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: list[tuple[float, float, float]]
+Usage example:
+    from lunadem import get_scene_footprint_xyz
+    result = get_scene_footprint_xyz(...)
+    print(result)
+Related notes:
+- `get_scene_footprint_xyz` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 26: get_scene_ground_area_km2
+Import: from lunadem import get_scene_ground_area_km2
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_ground_area_km2(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'float | None'
+Summary: Return the derived ground area covered by the scene in square kilometers.
+Full docstring:
+Return the derived ground area covered by the scene in square kilometers.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: float | None
+Usage example:
+    from lunadem import get_scene_ground_area_km2
+    result = get_scene_ground_area_km2(...)
+    print(result)
+Related notes:
+- `get_scene_ground_area_km2` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 27: get_scene_ground_coverage
+Import: from lunadem import get_scene_ground_coverage
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_ground_coverage(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'tuple[float | None, float | None]'
+Summary: Return ground coverage as (height_m, width_m).
+Full docstring:
+Return ground coverage as (height_m, width_m).
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: tuple[float | None, float | None]
+Usage example:
+    from lunadem import get_scene_ground_coverage
+    result = get_scene_ground_coverage(...)
+    print(result)
+Related notes:
+- `get_scene_ground_coverage` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 28: get_scene_sun_summary
+Import: from lunadem import get_scene_sun_summary
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_sun_summary(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'Dict[str, Any]'
+Summary: Return a compact summary of sun geometry metadata.
+Full docstring:
+Return a compact summary of sun geometry metadata.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import get_scene_sun_summary
+    result = get_scene_sun_summary(...)
+    print(result)
+Related notes:
+- `get_scene_sun_summary` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 29: get_scene_sun_vector
+Import: from lunadem import get_scene_sun_vector
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_sun_vector(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'np.ndarray | None'
+Summary: Return the normalized sun vector derived from scene metadata.
+Full docstring:
+Return the normalized sun vector derived from scene metadata.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: np.ndarray | None
+Usage example:
+    from lunadem import get_scene_sun_vector
+    result = get_scene_sun_vector(...)
+    print(result)
+Related notes:
+- `get_scene_sun_vector` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 30: get_scene_time_range
+Import: from lunadem import get_scene_time_range
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_time_range(item: 'Mapping[str, Any] | str | Path') -> 'tuple[str | None, str | None]'
+Summary: Return the scene acquisition time range from the STAC item.
+Full docstring:
+Return the scene acquisition time range from the STAC item.
+Parameter details:
+- Name: item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path
+  Default: <required>
+- `item`: user-provided argument.
+Return annotation: tuple[str | None, str | None]
+Usage example:
+    from lunadem import get_scene_time_range
+    result = get_scene_time_range(...)
+    print(result)
+Related notes:
+- `get_scene_time_range` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 31: get_scene_transform
+Import: from lunadem import get_scene_transform
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_transform(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'tuple[float, ...] | None'
+Summary: Return the projected transform tuple when present.
+Full docstring:
+Return the projected transform tuple when present.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: tuple[float, ...] | None
+Usage example:
+    from lunadem import get_scene_transform
+    result = get_scene_transform(...)
+    print(result)
+Related notes:
+- `get_scene_transform` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 32: get_scene_view_angles
+Import: from lunadem import get_scene_view_angles
+Source module: lunadem.datasets.kaguya
+Signature: get_scene_view_angles(scene_or_geometry_or_item: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'Dict[str, float | None]'
+Summary: Return view-angle metadata in degrees.
+Full docstring:
+Return view-angle metadata in degrees.
+Parameter details:
+- Name: scene_or_geometry_or_item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `scene_or_geometry_or_item`: user-provided argument.
+- `scene_or_geometry_or_item` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: Dict[str, float | None]
+Usage example:
+    from lunadem import get_scene_view_angles
+    result = get_scene_view_angles(...)
+    print(result)
+Related notes:
+- `get_scene_view_angles` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 33: get_sfs_assumptions
+Import: from lunadem import get_sfs_assumptions
+Source module: lunadem.sfs_theory
+Signature: get_sfs_assumptions() -> 'str'
+Summary: Return the packaged SFS assumptions document.
+Full docstring:
+Return the packaged SFS assumptions document.
+Parameter details:
+- This callable takes no public parameters.
+Return annotation: str
+Usage example:
+    from lunadem import get_sfs_assumptions
+    result = get_sfs_assumptions(...)
+    print(result)
+Related notes:
+- `get_sfs_assumptions` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 34: get_sfs_math
+Import: from lunadem import get_sfs_math
+Source module: lunadem.sfs_theory
+Signature: get_sfs_math() -> 'str'
+Summary: Return the packaged SFS mathematics document.
+Full docstring:
+Return the packaged SFS mathematics document.
+Parameter details:
+- This callable takes no public parameters.
+Return annotation: str
+Usage example:
+    from lunadem import get_sfs_math
+    result = get_sfs_math(...)
+    print(result)
+Related notes:
+- `get_sfs_math` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 35: get_sfs_terms
+Import: from lunadem import get_sfs_terms
+Source module: lunadem.sfs_theory
+Signature: get_sfs_terms() -> 'str'
+Summary: Return the packaged SFS terminology document.
+Full docstring:
+Return the packaged SFS terminology document.
+Parameter details:
+- This callable takes no public parameters.
+Return annotation: str
+Usage example:
+    from lunadem import get_sfs_terms
+    result = get_sfs_terms(...)
+    print(result)
+Related notes:
+- `get_sfs_terms` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 36: get_test_scene_manifest
+Import: from lunadem import get_test_scene_manifest
+Source module: lunadem.datasets.kaguya
+Signature: get_test_scene_manifest(dataset_root: 'str | Path' = WindowsPath('dataset')) -> 'Dict[str, Any]'
+Summary: Return the local manifest for the packaged reference scene.
+Full docstring:
+Return the local manifest for the packaged reference scene.
+Parameter details:
+- Name: dataset_root
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: dataset
+- `dataset_root`: user-provided argument.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import get_test_scene_manifest
+    result = get_test_scene_manifest(...)
+    print(result)
+Related notes:
+- `get_test_scene_manifest` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 37: ground_coverage_meters
+Import: from lunadem import ground_coverage_meters
+Source module: lunadem.geometry.conversions
+Signature: ground_coverage_meters(shape: 'Sequence[int]', gsd_m: 'float') -> 'Tuple[float, float]'
+Summary: Return ground height/width in meters for an image shape and GSD.
+Full docstring:
+Return ground height/width in meters for an image shape and GSD.
+Parameter details:
+- Name: shape
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Sequence[int]
+  Default: <required>
+- `shape`: user-provided argument.
+- Name: gsd_m
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `gsd_m`: user-provided argument.
+Return annotation: Tuple[float, float]
+Usage example:
+    from lunadem import ground_coverage_meters
+    result = ground_coverage_meters(...)
+    print(result)
+Related notes:
+- `ground_coverage_meters` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 38: km_to_m
+Import: from lunadem import km_to_m
+Source module: lunadem.geometry.conversions
+Signature: km_to_m(value_km: 'float') -> 'float'
+Summary: Convert kilometers to meters.
+Full docstring:
+Convert kilometers to meters.
+Parameter details:
+- Name: value_km
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `value_km`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import km_to_m
+    result = km_to_m(...)
+    print(result)
+Related notes:
+- `km_to_m` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 39: latlon_to_cartesian_moon
+Import: from lunadem import latlon_to_cartesian_moon
+Source module: lunadem.geometry.conversions
+Signature: latlon_to_cartesian_moon(lat_deg: 'float', lon_deg: 'float', radius_m: 'float' = 1737400.0) -> 'Tuple[float, float, float]'
+Summary: Convert lunar latitude/longitude to Cartesian coordinates.
+Full docstring:
+Convert lunar latitude/longitude to Cartesian coordinates.
+Parameter details:
+- Name: lat_deg
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `lat_deg`: user-provided argument.
+- Name: lon_deg
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `lon_deg`: user-provided argument.
+- Name: radius_m
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: 1737400.0
+- `radius_m`: user-provided argument.
+Return annotation: Tuple[float, float, float]
+Usage example:
+    from lunadem import latlon_to_cartesian_moon
+    result = latlon_to_cartesian_moon(...)
+    print(result)
+Related notes:
+- `latlon_to_cartesian_moon` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 40: line_time_seconds
+Import: from lunadem import line_time_seconds
+Source module: lunadem.geometry.conversions
+Signature: line_time_seconds(duration_s: 'float', image_lines: 'int') -> 'float'
+Summary: Compute approximate line scan time from duration and line count.
+Full docstring:
+Compute approximate line scan time from duration and line count.
+Parameter details:
+- Name: duration_s
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `duration_s`: user-provided argument.
+- Name: image_lines
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: int
+  Default: <required>
+- `image_lines`: user-provided argument.
+- `image_lines` usually accepts a NumPy array or an image/TIFF path.
+Return annotation: float
+Usage example:
+    from lunadem import line_time_seconds
+    result = line_time_seconds(...)
+    print(result)
+Related notes:
+- `line_time_seconds` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 41: list_available_rovers
+Import: from lunadem import list_available_rovers
+Source module: lunadem.landing.rovers
+Signature: list_available_rovers() -> 'list[str]'
+Summary: Return the sorted names of built-in rover presets.
+Full docstring:
+Return the sorted names of built-in rover presets.
+Parameter details:
+- This callable takes no public parameters.
+Return annotation: list[str]
+Usage example:
+    from lunadem import list_available_rovers
+    result = list_available_rovers(...)
+    print(result)
+Related notes:
+- `list_available_rovers` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 42: list_kaguya_scenes
+Import: from lunadem import list_kaguya_scenes
+Source module: lunadem.datasets.kaguya
+Signature: list_kaguya_scenes(dataset_root: 'str | Path' = WindowsPath('dataset')) -> 'list[str]'
+Summary: Return sorted local scene identifiers available under the dataset root.
+Full docstring:
+Return sorted local scene identifiers available under the dataset root.
+Parameter details:
+- Name: dataset_root
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: dataset
+- `dataset_root`: user-provided argument.
+Return annotation: list[str]
+Usage example:
+    from lunadem import list_kaguya_scenes
+    result = list_kaguya_scenes(...)
+    print(result)
+Related notes:
+- `list_kaguya_scenes` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 43: list_model_names
+Import: from lunadem import list_model_names
+Source module: lunadem.ml.inference
+Signature: list_model_names() -> 'list[str]'
+Summary: Return the packaged metadata model names.
+Full docstring:
+Return the packaged metadata model names.
+Parameter details:
+- This callable takes no public parameters.
+Return annotation: list[str]
+Usage example:
+    from lunadem import list_model_names
+    result = list_model_names(...)
+    print(result)
+Related notes:
+- `list_model_names` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 44: load_camera_model
+Import: from lunadem import load_camera_model
+Source module: lunadem.datasets.kaguya
+Signature: load_camera_model(scene_id_or_path: 'str | Path', dataset_root: 'str | Path' = WindowsPath('dataset')) -> 'Dict[str, Any]'
+Summary: Load a camera.json model from the local Kaguya dataset.
+Full docstring:
+Load a camera.json model from the local Kaguya dataset.
+Parameter details:
+- Name: scene_id_or_path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: <required>
+- `scene_id_or_path`: user-provided argument.
+- `scene_id_or_path` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- `scene_id_or_path` should point to a writable path on disk when saving output is desired.
+- Name: dataset_root
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: dataset
+- `dataset_root`: user-provided argument.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import load_camera_model
+    result = load_camera_model(...)
+    print(result)
+Related notes:
+- `load_camera_model` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 45: load_image
+Import: from lunadem import load_image
+Source module: lunadem.io.image
+Signature: load_image(image_input: 'str | Path | np.ndarray', normalize: 'bool' = True) -> 'Tuple[np.ndarray, Dict[str, Any]]'
+Summary: Load PNG/JPG/TIFF/GeoTIFF or in-memory array.
+Full docstring:
+Load PNG/JPG/TIFF/GeoTIFF or in-memory array.
+
+Returns
+-------
+tuple[np.ndarray, dict]
+    `(image, metadata)` where image is float32 and metadata includes source details.
+Parameter details:
+- Name: image_input
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path | np.ndarray
+  Default: <required>
+- `image_input`: user-provided argument.
+- `image_input` usually accepts a NumPy array or an image/TIFF path.
+- Name: normalize
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: bool
+  Default: True
+- `normalize`: user-provided argument.
+Return annotation: Tuple[np.ndarray, Dict[str, Any]]
+Usage example:
+    from lunadem import load_image
+    result = load_image(...)
+    print(result)
+Related notes:
+- `load_image` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 46: load_kaguya_scene
+Import: from lunadem import load_kaguya_scene
+Source module: lunadem.datasets.kaguya
+Signature: load_kaguya_scene(scene_id_or_path: 'str | Path' = 'TC1S2B0_01_07496N087E3020', dataset_root: 'str | Path' = WindowsPath('dataset')) -> 'KaguyaScene'
+Summary: Load a complete local Kaguya scene bundle.
+Full docstring:
+Load a complete local Kaguya scene bundle.
+Parameter details:
+- Name: scene_id_or_path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: TC1S2B0_01_07496N087E3020
+- `scene_id_or_path`: user-provided argument.
+- `scene_id_or_path` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- `scene_id_or_path` should point to a writable path on disk when saving output is desired.
+- Name: dataset_root
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: dataset
+- `dataset_root`: user-provided argument.
+Return annotation: KaguyaScene
+Usage example:
+    from lunadem import load_kaguya_scene
+    scene = load_kaguya_scene('TC1S2B0_01_07496N087E3020')
+    print(scene.scene_id)
+    print(scene.image_path)
+Related notes:
+- `load_kaguya_scene` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 47: load_pds_label
+Import: from lunadem import load_pds_label
+Source module: lunadem.io.pds
+Signature: load_pds_label(path: 'str | Path') -> 'Dict[str, Any]'
+Summary: Load PDS label with optional `pvl` backend and fallback parser.
+Full docstring:
+Load PDS label with optional `pvl` backend and fallback parser.
+Parameter details:
+- Name: path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: <required>
+- `path`: user-provided argument.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import load_pds_label
+    result = load_pds_label(...)
+    print(result)
+Related notes:
+- `load_pds_label` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 48: load_stac_item
+Import: from lunadem import load_stac_item
+Source module: lunadem.datasets.kaguya
+Signature: load_stac_item(scene_id_or_path: 'str | Path', dataset_root: 'str | Path' = WindowsPath('dataset')) -> 'Dict[str, Any]'
+Summary: Load a STAC item.json from the local Kaguya dataset.
+Full docstring:
+Load a STAC item.json from the local Kaguya dataset.
+Parameter details:
+- Name: scene_id_or_path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: <required>
+- `scene_id_or_path`: user-provided argument.
+- `scene_id_or_path` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- `scene_id_or_path` should point to a writable path on disk when saving output is desired.
+- Name: dataset_root
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: dataset
+- `dataset_root`: user-provided argument.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import load_stac_item
+    result = load_stac_item(...)
+    print(result)
+Related notes:
+- `load_stac_item` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 49: m_to_km
+Import: from lunadem import m_to_km
+Source module: lunadem.geometry.conversions
+Signature: m_to_km(value_m: 'float') -> 'float'
+Summary: Convert meters to kilometers.
+Full docstring:
+Convert meters to kilometers.
+Parameter details:
+- Name: value_m
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `value_m`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import m_to_km
+    result = m_to_km(...)
+    print(result)
+Related notes:
+- `m_to_km` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 50: m_to_mm
+Import: from lunadem import m_to_mm
+Source module: lunadem.geometry.conversions
+Signature: m_to_mm(value_m: 'float') -> 'float'
+Summary: Convert meters to millimeters.
+Full docstring:
+Convert meters to millimeters.
+Parameter details:
+- Name: value_m
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `value_m`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import m_to_mm
+    result = m_to_mm(...)
+    print(result)
+Related notes:
+- `m_to_mm` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 51: mean_vector
+Import: from lunadem import mean_vector
+Source module: lunadem.geometry.conversions
+Signature: mean_vector(values: 'Iterable[Sequence[float]]') -> 'np.ndarray | None'
+Summary: Return the arithmetic mean vector for a collection of numeric sequences.
+Full docstring:
+Return the arithmetic mean vector for a collection of numeric sequences.
+Parameter details:
+- Name: values
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Iterable[Sequence[float]]
+  Default: <required>
+- `values`: user-provided argument.
+Return annotation: np.ndarray | None
+Usage example:
+    from lunadem import mean_vector
+    result = mean_vector(...)
+    print(result)
+Related notes:
+- `mean_vector` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 52: mm_to_m
+Import: from lunadem import mm_to_m
+Source module: lunadem.geometry.conversions
+Signature: mm_to_m(value_mm: 'float') -> 'float'
+Summary: Convert millimeters to meters.
+Full docstring:
+Convert millimeters to meters.
+Parameter details:
+- Name: value_mm
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `value_mm`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import mm_to_m
+    result = mm_to_m(...)
+    print(result)
+Related notes:
+- `mm_to_m` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 53: normalize_to_unit_range
+Import: from lunadem import normalize_to_unit_range
+Source module: lunadem.utils.arrays
+Signature: normalize_to_unit_range(array: 'np.ndarray') -> 'np.ndarray'
+Summary: Normalize an array to [0, 1].
+Full docstring:
+Normalize an array to [0, 1].
+
+Parameters
+----------
+array:
+    Input array.
+
+Returns
+-------
+np.ndarray
+    Float32 normalized array. Returns zeros when range is degenerate.
+Parameter details:
+- Name: array
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `array`: user-provided argument.
+Return annotation: np.ndarray
+Usage example:
+    from lunadem import normalize_to_unit_range
+    result = normalize_to_unit_range(...)
+    print(result)
+Related notes:
+- `normalize_to_unit_range` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 54: path_length
+Import: from lunadem import path_length
+Source module: lunadem.geometry.conversions
+Signature: path_length(values: 'Iterable[Sequence[float]]') -> 'float'
+Summary: Return the total Euclidean path length across sequential vectors.
+Full docstring:
+Return the total Euclidean path length across sequential vectors.
+Parameter details:
+- Name: values
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Iterable[Sequence[float]]
+  Default: <required>
+- `values`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import path_length
+    result = path_length(...)
+    print(result)
+Related notes:
+- `path_length` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 55: pixel_scale_meters
+Import: from lunadem import pixel_scale_meters
+Source module: lunadem.geometry.scaling
+Signature: pixel_scale_meters(sensor: 'SensorConfig') -> 'float'
+Summary: Compute pixel ground sample distance in meters.
+Full docstring:
+Compute pixel ground sample distance in meters.
+Parameter details:
+- Name: sensor
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SensorConfig
+  Default: <required>
+- `sensor`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import pixel_scale_meters
+    result = pixel_scale_meters(...)
+    print(result)
+Related notes:
+- `pixel_scale_meters` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 56: pixel_to_projected
+Import: from lunadem import pixel_to_projected
+Source module: lunadem.geometry.conversions
+Signature: pixel_to_projected(row: 'float', col: 'float', transform: 'Sequence[float]') -> 'Tuple[float, float]'
+Summary: Map pixel coordinates to projected coordinates using a GDAL transform.
+Full docstring:
+Map pixel coordinates to projected coordinates using a GDAL transform.
+Parameter details:
+- Name: row
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `row`: user-provided argument.
+- Name: col
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `col`: user-provided argument.
+- Name: transform
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Sequence[float]
+  Default: <required>
+- `transform`: user-provided argument.
+Return annotation: Tuple[float, float]
+Usage example:
+    from lunadem import pixel_to_projected
+    result = pixel_to_projected(...)
+    print(result)
+Related notes:
+- `pixel_to_projected` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 57: plot_3d_surface
+Import: from lunadem import plot_3d_surface
+Source module: lunadem.visualization.plots
+Signature: plot_3d_surface(dem: 'np.ndarray', save_path: 'str | Path | None' = None, *, title: 'str' = 'Reconstructed 3D Surface', show: 'bool' = False, block: 'bool' = True, max_points: 'int' = 200)
+Summary: Render a 3D terrain surface with Matplotlib.
+Full docstring:
+Render a 3D terrain surface with Matplotlib.
+Parameter details:
+- Name: dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `dem`: user-provided argument.
+- `dem` is typically a height map or terrain-like array.
+- Name: save_path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Reconstructed 3D Surface
+- `title`: user-provided argument.
+- Name: show
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: False
+- `show`: user-provided argument.
+- `show` controls whether a visible window or interactive renderer is opened immediately.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: max_points
+  Kind: KEYWORD_ONLY
+  Annotation: int
+  Default: 200
+- `max_points`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import plot_3d_surface
+    result = plot_3d_surface(...)
+    print(result)
+Related notes:
+- `plot_3d_surface` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 58: plot_3d_surface_interactive
+Import: from lunadem import plot_3d_surface_interactive
+Source module: lunadem.visualization.interactive
+Signature: plot_3d_surface_interactive(surface_or_image: 'np.ndarray | str | Path', *, title: 'str' = 'Interactive Lunar Surface', save_path: 'str | Path | None' = None, show: 'bool' = False) -> 'go.Figure'
+Summary: Render a hoverable 3D surface from a DEM or image-like array.
+Full docstring:
+Render a hoverable 3D surface from a DEM or image-like array.
+Parameter details:
+- Name: surface_or_image
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray | str | Path
+  Default: <required>
+- `surface_or_image`: user-provided argument.
+- `surface_or_image` usually accepts a NumPy array or an image/TIFF path.
+- `surface_or_image` is typically a height map or terrain-like array.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Interactive Lunar Surface
+- `title`: user-provided argument.
+- Name: save_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: show
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: False
+- `show`: user-provided argument.
+- `show` controls whether a visible window or interactive renderer is opened immediately.
+Return annotation: go.Figure
+Usage example:
+    from lunadem import plot_3d_surface_interactive
+    result = plot_3d_surface_interactive(...)
+    print(result)
+Related notes:
+- `plot_3d_surface_interactive` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 59: plot_depth_map
+Import: from lunadem import plot_depth_map
+Source module: lunadem.visualization.plots
+Signature: plot_depth_map(dem: 'np.ndarray', save_path: 'str | Path | None' = None, *, title: 'str' = 'Reconstructed DEM', show: 'bool' = False, block: 'bool' = True)
+Summary: Render a 2D terrain map with Matplotlib.
+Full docstring:
+Render a 2D terrain map with Matplotlib.
+Parameter details:
+- Name: dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `dem`: user-provided argument.
+- `dem` is typically a height map or terrain-like array.
+- Name: save_path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Reconstructed DEM
+- `title`: user-provided argument.
+- Name: show
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: False
+- `show`: user-provided argument.
+- `show` controls whether a visible window or interactive renderer is opened immediately.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import plot_depth_map
+    result = plot_depth_map(...)
+    print(result)
+Related notes:
+- `plot_depth_map` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 60: plot_landing_site_2d
+Import: from lunadem import plot_landing_site_2d
+Source module: lunadem.visualization
+Signature: plot_landing_site_2d(image_or_surface, landing_result, *, backend: 'PlotBackend' = 'plotly', show: 'bool' = False, save_path: 'str | Path | None' = None, html_path: 'str | Path | None' = None, block: 'bool' = True, title: 'str' = 'Safe Landing Site')
+Summary: Plot a 2D landing-site overlay with Plotly, Matplotlib, or both.
+Full docstring:
+Plot a 2D landing-site overlay with Plotly, Matplotlib, or both.
+Parameter details:
+- Name: image_or_surface
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `image_or_surface`: user-provided argument.
+- `image_or_surface` usually accepts a NumPy array or an image/TIFF path.
+- `image_or_surface` is typically a height map or terrain-like array.
+- Name: landing_result
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `landing_result`: user-provided argument.
+- Name: backend
+  Kind: KEYWORD_ONLY
+  Annotation: PlotBackend
+  Default: plotly
+- `backend`: user-provided argument.
+- `backend` should be `matplotlib`, `plotly`, or `both` when the function supports dual rendering.
+- Name: show
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: False
+- `show`: user-provided argument.
+- `show` controls whether a visible window or interactive renderer is opened immediately.
+- Name: save_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: html_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `html_path`: user-provided argument.
+- `html_path` should point to a writable path on disk when saving output is desired.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Safe Landing Site
+- `title`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import find_safe_landing_site, plot_landing_site_2d, load_kaguya_scene
+    scene = load_kaguya_scene('TC1S2B0_01_07496N087E3020')
+    landing = find_safe_landing_site(scene.image_path, scene=scene)
+    plot_landing_site_2d(scene.image_path, landing, backend='both', show=False, save_path='output/landing_2d.png', html_path='output/landing_2d.html')
+Related notes:
+- `plot_landing_site_2d` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 61: plot_landing_site_3d
+Import: from lunadem import plot_landing_site_3d
+Source module: lunadem.visualization
+Signature: plot_landing_site_3d(surface_or_dem, landing_result, *, backend: 'PlotBackend' = 'plotly', show: 'bool' = False, save_path: 'str | Path | None' = None, html_path: 'str | Path | None' = None, block: 'bool' = True, title: 'str' = '3D Landing Site Visualization')
+Summary: Plot a 3D landing-site visualization with Plotly, Matplotlib, or both.
+Full docstring:
+Plot a 3D landing-site visualization with Plotly, Matplotlib, or both.
+Parameter details:
+- Name: surface_or_dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `surface_or_dem`: user-provided argument.
+- `surface_or_dem` is typically a height map or terrain-like array.
+- Name: landing_result
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `landing_result`: user-provided argument.
+- Name: backend
+  Kind: KEYWORD_ONLY
+  Annotation: PlotBackend
+  Default: plotly
+- `backend`: user-provided argument.
+- `backend` should be `matplotlib`, `plotly`, or `both` when the function supports dual rendering.
+- Name: show
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: False
+- `show`: user-provided argument.
+- `show` controls whether a visible window or interactive renderer is opened immediately.
+- Name: save_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: html_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `html_path`: user-provided argument.
+- `html_path` should point to a writable path on disk when saving output is desired.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: 3D Landing Site Visualization
+- `title`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import find_safe_landing_site, plot_landing_site_3d, load_kaguya_scene
+    scene = load_kaguya_scene('TC1S2B0_01_07496N087E3020')
+    landing = find_safe_landing_site(scene.image_path, scene=scene)
+    plot_landing_site_3d(scene.image_path, landing, backend='both', show=False, save_path='output/landing_3d.png', html_path='output/landing_3d.html')
+Related notes:
+- `plot_landing_site_3d` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 62: plot_moon_surface_3d
+Import: from lunadem import plot_moon_surface_3d
+Source module: lunadem.visualization
+Signature: plot_moon_surface_3d(scene, *, backend: 'PlotBackend' = 'plotly', show: 'bool' = False, save_path: 'str | Path | None' = None, html_path: 'str | Path | None' = None, block: 'bool' = True, title: 'str' = 'Moon Surface And Scene Geometry')
+Summary: Plot the Moon globe, scene footprint, and space geometry.
+Full docstring:
+Plot the Moon globe, scene footprint, and space geometry.
+Parameter details:
+- Name: scene
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `scene`: user-provided argument.
+- `scene` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: backend
+  Kind: KEYWORD_ONLY
+  Annotation: PlotBackend
+  Default: plotly
+- `backend`: user-provided argument.
+- `backend` should be `matplotlib`, `plotly`, or `both` when the function supports dual rendering.
+- Name: show
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: False
+- `show`: user-provided argument.
+- `show` controls whether a visible window or interactive renderer is opened immediately.
+- Name: save_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: html_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `html_path`: user-provided argument.
+- `html_path` should point to a writable path on disk when saving output is desired.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Moon Surface And Scene Geometry
+- `title`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import load_kaguya_scene, plot_moon_surface_3d
+    scene = load_kaguya_scene('TC1S2B0_01_07496N087E3020')
+    figure = plot_moon_surface_3d(scene, backend='both', show=False, save_path='output/moon_surface.png', html_path='output/moon_surface.html')
+    print(type(figure).__name__)
+Related notes:
+- `plot_moon_surface_3d` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 63: plot_scene_geometry_3d
+Import: from lunadem import plot_scene_geometry_3d
+Source module: lunadem.visualization
+Signature: plot_scene_geometry_3d(scene, *, backend: 'PlotBackend' = 'plotly', show: 'bool' = False, save_path: 'str | Path | None' = None, html_path: 'str | Path | None' = None, block: 'bool' = True, title: 'str' = 'Moon, Footprint, Camera, Sun, and Earth')
+Summary: Plot Moon/scene geometry with Plotly, Matplotlib, or both.
+Full docstring:
+Plot Moon/scene geometry with Plotly, Matplotlib, or both.
+Parameter details:
+- Name: scene
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `scene`: user-provided argument.
+- `scene` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: backend
+  Kind: KEYWORD_ONLY
+  Annotation: PlotBackend
+  Default: plotly
+- `backend`: user-provided argument.
+- `backend` should be `matplotlib`, `plotly`, or `both` when the function supports dual rendering.
+- Name: show
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: False
+- `show`: user-provided argument.
+- `show` controls whether a visible window or interactive renderer is opened immediately.
+- Name: save_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: html_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `html_path`: user-provided argument.
+- `html_path` should point to a writable path on disk when saving output is desired.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Moon, Footprint, Camera, Sun, and Earth
+- `title`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import load_kaguya_scene, plot_scene_geometry_3d
+    scene = load_kaguya_scene('TC1S2B0_01_07496N087E3020')
+    figure = plot_scene_geometry_3d(scene, backend='both', show=False, save_path='output/scene_geometry.png', html_path='output/scene_geometry.html')
+    print(type(figure).__name__)
+Related notes:
+- `plot_scene_geometry_3d` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 64: predict_illumination
+Import: from lunadem import predict_illumination
+Source module: lunadem.ml.inference
+Signature: predict_illumination(image_or_tif: 'np.ndarray | str | Path', *, max_patches: 'int' = 16) -> 'MetadataPrediction'
+Summary: Predict sun azimuth and sun elevation from an image or TIFF.
+Full docstring:
+Predict sun azimuth and sun elevation from an image or TIFF.
+Parameter details:
+- Name: image_or_tif
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray | str | Path
+  Default: <required>
+- `image_or_tif`: user-provided argument.
+- `image_or_tif` usually accepts a NumPy array or an image/TIFF path.
+- Name: max_patches
+  Kind: KEYWORD_ONLY
+  Annotation: int
+  Default: 16
+- `max_patches`: user-provided argument.
+Return annotation: MetadataPrediction
+Usage example:
+    from lunadem import predict_illumination
+    result = predict_illumination(...)
+    print(result)
+Related notes:
+- `predict_illumination` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 65: predict_scene_location
+Import: from lunadem import predict_scene_location
+Source module: lunadem.ml.inference
+Signature: predict_scene_location(image_or_tif: 'np.ndarray | str | Path', *, max_patches: 'int' = 16) -> 'MetadataPrediction'
+Summary: Predict GSD and approximate scene centroid location from an image or TIFF.
+Full docstring:
+Predict GSD and approximate scene centroid location from an image or TIFF.
+Parameter details:
+- Name: image_or_tif
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray | str | Path
+  Default: <required>
+- `image_or_tif`: user-provided argument.
+- `image_or_tif` usually accepts a NumPy array or an image/TIFF path.
+- Name: max_patches
+  Kind: KEYWORD_ONLY
+  Annotation: int
+  Default: 16
+- `max_patches`: user-provided argument.
+Return annotation: MetadataPrediction
+Usage example:
+    from lunadem import predict_scene_location
+    result = predict_scene_location(...)
+    print(result)
+Related notes:
+- `predict_scene_location` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 66: predict_scene_metadata
+Import: from lunadem import predict_scene_metadata
+Source module: lunadem.ml.inference
+Signature: predict_scene_metadata(image_or_tif: 'np.ndarray | str | Path', *, max_patches: 'int' = 16) -> 'MetadataPrediction'
+Summary: Run all bundled metadata models and return a merged prediction payload.
+Full docstring:
+Run all bundled metadata models and return a merged prediction payload.
+Parameter details:
+- Name: image_or_tif
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray | str | Path
+  Default: <required>
+- `image_or_tif`: user-provided argument.
+- `image_or_tif` usually accepts a NumPy array or an image/TIFF path.
+- Name: max_patches
+  Kind: KEYWORD_ONLY
+  Annotation: int
+  Default: 16
+- `max_patches`: user-provided argument.
+Return annotation: MetadataPrediction
+Usage example:
+    from lunadem import predict_scene_metadata
+    prediction = predict_scene_metadata('dataset/TC1S2B0_01_07496N087E3020/image/image.tif', max_patches=8)
+    print(prediction.targets)
+    print(prediction.patch_count)
+Related notes:
+- `predict_scene_metadata` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 67: predict_view_geometry
+Import: from lunadem import predict_view_geometry
+Source module: lunadem.ml.inference
+Signature: predict_view_geometry(image_or_tif: 'np.ndarray | str | Path', *, max_patches: 'int' = 16) -> 'MetadataPrediction'
+Summary: Predict camera view azimuth and off-nadir angle from an image or TIFF.
+Full docstring:
+Predict camera view azimuth and off-nadir angle from an image or TIFF.
+Parameter details:
+- Name: image_or_tif
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray | str | Path
+  Default: <required>
+- `image_or_tif`: user-provided argument.
+- `image_or_tif` usually accepts a NumPy array or an image/TIFF path.
+- Name: max_patches
+  Kind: KEYWORD_ONLY
+  Annotation: int
+  Default: 16
+- `max_patches`: user-provided argument.
+Return annotation: MetadataPrediction
+Usage example:
+    from lunadem import predict_view_geometry
+    result = predict_view_geometry(...)
+    print(result)
+Related notes:
+- `predict_view_geometry` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 68: projected_to_pixel
+Import: from lunadem import projected_to_pixel
+Source module: lunadem.geometry.conversions
+Signature: projected_to_pixel(x: 'float', y: 'float', transform: 'Sequence[float]') -> 'Tuple[float, float]'
+Summary: Map projected coordinates back to pixel coordinates using a GDAL transform.
+Full docstring:
+Map projected coordinates back to pixel coordinates using a GDAL transform.
+Parameter details:
+- Name: x
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `x`: user-provided argument.
+- Name: y
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `y`: user-provided argument.
+- Name: transform
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Sequence[float]
+  Default: <required>
+- `transform`: user-provided argument.
+Return annotation: Tuple[float, float]
+Usage example:
+    from lunadem import projected_to_pixel
+    result = projected_to_pixel(...)
+    print(result)
+Related notes:
+- `projected_to_pixel` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 69: rad_to_deg
+Import: from lunadem import rad_to_deg
+Source module: lunadem.geometry.conversions
+Signature: rad_to_deg(value_rad: 'float') -> 'float'
+Summary: Convert radians to degrees.
+Full docstring:
+Convert radians to degrees.
+Parameter details:
+- Name: value_rad
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: float
+  Default: <required>
+- `value_rad`: user-provided argument.
+Return annotation: float
+Usage example:
+    from lunadem import rad_to_deg
+    result = rad_to_deg(...)
+    print(result)
+Related notes:
+- `rad_to_deg` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 70: save_dem_as_geotiff
+Import: from lunadem import save_dem_as_geotiff
+Source module: lunadem.io.raster
+Signature: save_dem_as_geotiff(path: 'str | Path', dem: 'np.ndarray', georef: 'GeoreferenceConfig', metadata: 'Dict[str, Any] | None' = None) -> 'str'
+Summary: Save DEM as a compressed GeoTIFF.
+Full docstring:
+Save DEM as a compressed GeoTIFF.
+Parameter details:
+- Name: path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: <required>
+- `path`: user-provided argument.
+- Name: dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `dem`: user-provided argument.
+- `dem` is typically a height map or terrain-like array.
+- Name: georef
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: GeoreferenceConfig
+  Default: <required>
+- `georef`: user-provided argument.
+- Name: metadata
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Dict[str, Any] | None
+  Default: None
+- `metadata`: user-provided argument.
+Return annotation: str
+Usage example:
+    from lunadem import save_dem_as_geotiff
+    result = save_dem_as_geotiff(...)
+    print(result)
+Related notes:
+- `save_dem_as_geotiff` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 71: save_dem_as_obj
+Import: from lunadem import save_dem_as_obj
+Source module: lunadem.io.mesh
+Signature: save_dem_as_obj(path: 'str | Path', dem: 'np.ndarray') -> 'str'
+Summary: Save DEM as a Wavefront OBJ mesh.
+Full docstring:
+Save DEM as a Wavefront OBJ mesh.
+Parameter details:
+- Name: path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: <required>
+- `path`: user-provided argument.
+- Name: dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `dem`: user-provided argument.
+- `dem` is typically a height map or terrain-like array.
+Return annotation: str
+Usage example:
+    from lunadem import save_dem_as_obj
+    result = save_dem_as_obj(...)
+    print(result)
+Related notes:
+- `save_dem_as_obj` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 72: save_dem_as_ply
+Import: from lunadem import save_dem_as_ply
+Source module: lunadem.io.mesh
+Signature: save_dem_as_ply(path: 'str | Path', dem: 'np.ndarray') -> 'str'
+Summary: Save DEM as ASCII PLY mesh.
+Full docstring:
+Save DEM as ASCII PLY mesh.
+Parameter details:
+- Name: path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: <required>
+- `path`: user-provided argument.
+- Name: dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `dem`: user-provided argument.
+- `dem` is typically a height map or terrain-like array.
+Return annotation: str
+Usage example:
+    from lunadem import save_dem_as_ply
+    result = save_dem_as_ply(...)
+    print(result)
+Related notes:
+- `save_dem_as_ply` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 73: save_manifest
+Import: from lunadem import save_manifest
+Source module: lunadem.io.manifest
+Signature: save_manifest(path: 'str | Path', payload: 'Dict[str, Any]') -> 'str'
+Summary: Save manifest JSON for reproducibility.
+Full docstring:
+Save manifest JSON for reproducibility.
+Parameter details:
+- Name: path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path
+  Default: <required>
+- `path`: user-provided argument.
+- Name: payload
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Dict[str, Any]
+  Default: <required>
+- `payload`: user-provided argument.
+Return annotation: str
+Usage example:
+    from lunadem import save_manifest
+    result = save_manifest(...)
+    print(result)
+Related notes:
+- `save_manifest` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 74: scale_dem_to_meters
+Import: from lunadem import scale_dem_to_meters
+Source module: lunadem.geometry.scaling
+Signature: scale_dem_to_meters(dem: 'np.ndarray', sensor: 'SensorConfig', center: 'bool' = True) -> 'np.ndarray'
+Summary: Scale relative DEM to metric units.
+Full docstring:
+Scale relative DEM to metric units.
+Parameter details:
+- Name: dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `dem`: user-provided argument.
+- `dem` is typically a height map or terrain-like array.
+- Name: sensor
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SensorConfig
+  Default: <required>
+- `sensor`: user-provided argument.
+- Name: center
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: bool
+  Default: True
+- `center`: user-provided argument.
+Return annotation: np.ndarray
+Usage example:
+    from lunadem import scale_dem_to_meters
+    result = scale_dem_to_meters(...)
+    print(result)
+Related notes:
+- `scale_dem_to_meters` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 75: scene_geometry_to_dict
+Import: from lunadem import scene_geometry_to_dict
+Source module: lunadem.datasets.kaguya
+Signature: scene_geometry_to_dict(geometry: 'SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path') -> 'Dict[str, Any]'
+Summary: Convert a scene geometry object into a JSON-ready dictionary.
+Full docstring:
+Convert a scene geometry object into a JSON-ready dictionary.
+Parameter details:
+- Name: geometry
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: SceneGeometry | KaguyaScene | Mapping[str, Any] | str | Path
+  Default: <required>
+- `geometry`: user-provided argument.
+Return annotation: Dict[str, Any]
+Usage example:
+    from lunadem import scene_geometry_to_dict
+    result = scene_geometry_to_dict(...)
+    print(result)
+Related notes:
+- `scene_geometry_to_dict` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 76: show_depth_map
+Import: from lunadem import show_depth_map
+Source module: lunadem.visualization.plots
+Signature: show_depth_map(dem: 'np.ndarray', save_path: 'str | Path | None' = None, *, title: 'str' = 'Reconstructed DEM', block: 'bool' = True)
+Summary: Show a 2D terrain map using Matplotlib.
+Full docstring:
+Show a 2D terrain map using Matplotlib.
+Parameter details:
+- Name: dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `dem`: user-provided argument.
+- `dem` is typically a height map or terrain-like array.
+- Name: save_path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Reconstructed DEM
+- `title`: user-provided argument.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import show_depth_map
+    result = show_depth_map(...)
+    print(result)
+Related notes:
+- `show_depth_map` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 77: show_landing_site_2d
+Import: from lunadem import show_landing_site_2d
+Source module: lunadem.visualization
+Signature: show_landing_site_2d(image_or_surface, landing_result, *, backend: 'PlotBackend' = 'matplotlib', save_path: 'str | Path | None' = None, html_path: 'str | Path | None' = None, block: 'bool' = True, title: 'str' = 'Safe Landing Site')
+Summary: Show a 2D landing-site overlay.
+Full docstring:
+Show a 2D landing-site overlay.
+Parameter details:
+- Name: image_or_surface
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `image_or_surface`: user-provided argument.
+- `image_or_surface` usually accepts a NumPy array or an image/TIFF path.
+- `image_or_surface` is typically a height map or terrain-like array.
+- Name: landing_result
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `landing_result`: user-provided argument.
+- Name: backend
+  Kind: KEYWORD_ONLY
+  Annotation: PlotBackend
+  Default: matplotlib
+- `backend`: user-provided argument.
+- `backend` should be `matplotlib`, `plotly`, or `both` when the function supports dual rendering.
+- Name: save_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: html_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `html_path`: user-provided argument.
+- `html_path` should point to a writable path on disk when saving output is desired.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Safe Landing Site
+- `title`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import show_landing_site_2d
+    result = show_landing_site_2d(...)
+    print(result)
+Related notes:
+- `show_landing_site_2d` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 78: show_landing_site_3d
+Import: from lunadem import show_landing_site_3d
+Source module: lunadem.visualization
+Signature: show_landing_site_3d(surface_or_dem, landing_result, *, backend: 'PlotBackend' = 'matplotlib', save_path: 'str | Path | None' = None, html_path: 'str | Path | None' = None, block: 'bool' = True, title: 'str' = '3D Landing Site Visualization')
+Summary: Show a 3D landing-site visualization.
+Full docstring:
+Show a 3D landing-site visualization.
+Parameter details:
+- Name: surface_or_dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `surface_or_dem`: user-provided argument.
+- `surface_or_dem` is typically a height map or terrain-like array.
+- Name: landing_result
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `landing_result`: user-provided argument.
+- Name: backend
+  Kind: KEYWORD_ONLY
+  Annotation: PlotBackend
+  Default: matplotlib
+- `backend`: user-provided argument.
+- `backend` should be `matplotlib`, `plotly`, or `both` when the function supports dual rendering.
+- Name: save_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: html_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `html_path`: user-provided argument.
+- `html_path` should point to a writable path on disk when saving output is desired.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: 3D Landing Site Visualization
+- `title`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import show_landing_site_3d
+    result = show_landing_site_3d(...)
+    print(result)
+Related notes:
+- `show_landing_site_3d` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 79: show_moon_surface_3d
+Import: from lunadem import show_moon_surface_3d
+Source module: lunadem.visualization
+Signature: show_moon_surface_3d(scene, *, backend: 'PlotBackend' = 'matplotlib', save_path: 'str | Path | None' = None, html_path: 'str | Path | None' = None, block: 'bool' = True, title: 'str' = 'Moon Surface And Scene Geometry')
+Summary: Show the Moon globe and scene footprint.
+Full docstring:
+Show the Moon globe and scene footprint.
+Parameter details:
+- Name: scene
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `scene`: user-provided argument.
+- `scene` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: backend
+  Kind: KEYWORD_ONLY
+  Annotation: PlotBackend
+  Default: matplotlib
+- `backend`: user-provided argument.
+- `backend` should be `matplotlib`, `plotly`, or `both` when the function supports dual rendering.
+- Name: save_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: html_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `html_path`: user-provided argument.
+- `html_path` should point to a writable path on disk when saving output is desired.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Moon Surface And Scene Geometry
+- `title`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import show_moon_surface_3d
+    result = show_moon_surface_3d(...)
+    print(result)
+Related notes:
+- `show_moon_surface_3d` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 80: show_scene_geometry_3d
+Import: from lunadem import show_scene_geometry_3d
+Source module: lunadem.visualization
+Signature: show_scene_geometry_3d(scene, *, backend: 'PlotBackend' = 'matplotlib', save_path: 'str | Path | None' = None, html_path: 'str | Path | None' = None, block: 'bool' = True, title: 'str' = 'Moon, Footprint, Camera, Sun, and Earth')
+Summary: Show Moon/scene geometry.
+Full docstring:
+Show Moon/scene geometry.
+Parameter details:
+- Name: scene
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Any
+  Default: <required>
+- `scene`: user-provided argument.
+- `scene` can often be a scene id, a local scene directory, or a loaded `KaguyaScene`.
+- Name: backend
+  Kind: KEYWORD_ONLY
+  Annotation: PlotBackend
+  Default: matplotlib
+- `backend`: user-provided argument.
+- `backend` should be `matplotlib`, `plotly`, or `both` when the function supports dual rendering.
+- Name: save_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: html_path
+  Kind: KEYWORD_ONLY
+  Annotation: str | Path | None
+  Default: None
+- `html_path`: user-provided argument.
+- `html_path` should point to a writable path on disk when saving output is desired.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Moon, Footprint, Camera, Sun, and Earth
+- `title`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import show_scene_geometry_3d
+    result = show_scene_geometry_3d(...)
+    print(result)
+Related notes:
+- `show_scene_geometry_3d` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 81: show_surface_3d
+Import: from lunadem import show_surface_3d
+Source module: lunadem.visualization.plots
+Signature: show_surface_3d(dem: 'np.ndarray', save_path: 'str | Path | None' = None, *, title: 'str' = 'Reconstructed 3D Surface', block: 'bool' = True, max_points: 'int' = 200)
+Summary: Show a 3D terrain surface using Matplotlib.
+Full docstring:
+Show a 3D terrain surface using Matplotlib.
+Parameter details:
+- Name: dem
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: np.ndarray
+  Default: <required>
+- `dem`: user-provided argument.
+- `dem` is typically a height map or terrain-like array.
+- Name: save_path
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: str | Path | None
+  Default: None
+- `save_path`: user-provided argument.
+- `save_path` should point to a writable path on disk when saving output is desired.
+- Name: title
+  Kind: KEYWORD_ONLY
+  Annotation: str
+  Default: Reconstructed 3D Surface
+- `title`: user-provided argument.
+- Name: block
+  Kind: KEYWORD_ONLY
+  Annotation: bool
+  Default: True
+- `block`: user-provided argument.
+- Name: max_points
+  Kind: KEYWORD_ONLY
+  Annotation: int
+  Default: 200
+- `max_points`: user-provided argument.
+Return annotation: Any
+Usage example:
+    from lunadem import show_surface_3d
+    result = show_surface_3d(...)
+    print(result)
+Related notes:
+- `show_surface_3d` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+Function 82: summarize_scene_metadata
+Import: from lunadem import summarize_scene_metadata
+Source module: lunadem.datasets.kaguya
+Signature: summarize_scene_metadata(item: 'Mapping[str, Any] | str | Path', camera_model: 'Mapping[str, Any] | str | Path | None' = None) -> 'SceneGeometry'
+Summary: Derive scene geometry from STAC and camera-model metadata.
+Full docstring:
+Derive scene geometry from STAC and camera-model metadata.
+Parameter details:
+- Name: item
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path
+  Default: <required>
+- `item`: user-provided argument.
+- Name: camera_model
+  Kind: POSITIONAL_OR_KEYWORD
+  Annotation: Mapping[str, Any] | str | Path | None
+  Default: None
+- `camera_model`: user-provided argument.
+Return annotation: SceneGeometry
+Usage example:
+    from lunadem import summarize_scene_metadata
+    result = summarize_scene_metadata(...)
+    print(result)
+Related notes:
+- `summarize_scene_metadata` is part of the canonical `lunadem` public API.
+- This symbol is safe to document in `run.md` and example notebooks.
+- Prefer passing typed config models when you want explicit validation.
+- Prefer `show=False` in scripts when generating plots non-interactively.
+- Prefer the packaged test scene for smoke testing before moving to custom data.
+
+SECTION 6: PUBLIC CLASS REFERENCE
+---------------------------------
+Class 1: AnalysisConfig
+Import: from lunadem import AnalysisConfig
+Source module: lunadem.core.config
+Constructor signature: AnalysisConfig(*, pixel_size_m: Annotated[float, Gt(gt=0)] = 1.0, roughness_window: Annotated[int, Ge(ge=3), Le(le=31)] = 5, histogram_bins: Annotated[int, Ge(ge=8), Le(le=200)] = 40) -> None
+Summary: Terrain analytics configuration.
+Docstring:
+Terrain analytics configuration.
+Constructor parameters:
+- Name: pixel_size_m
+  Annotation: Annotated[float, Gt(gt=0)]
+  Default: 1.0
+- Name: roughness_window
+  Annotation: Annotated[int, Ge(ge=3), Le(le=31)]
+  Default: 5
+- Name: histogram_bins
+  Annotation: Annotated[int, Ge(ge=8), Le(le=200)]
+  Default: 40
+Example:
+    from lunadem import AnalysisConfig
+    instance = AnalysisConfig(...)
+    print(instance)
+
+Class 2: DEMResult
+Import: from lunadem import DEMResult
+Source module: lunadem.core.models
+Constructor signature: DEMResult(dem_meters: 'np.ndarray', method: 'str', pixel_scale_m: 'float', crs: 'str', exports: 'Dict[str, Optional[str]]' = <factory>, diagnostics: 'Dict[str, Any]' = <factory>, metrics: 'Optional[TerrainMetrics]' = None, metadata: 'Dict[str, Any]' = <factory>) -> None
+Summary: DEM generation output.
+Docstring:
+DEM generation output.
+Constructor parameters:
+- Name: dem_meters
+  Annotation: np.ndarray
+  Default: <required>
+- Name: method
+  Annotation: str
+  Default: <required>
+- Name: pixel_scale_m
+  Annotation: float
+  Default: <required>
+- Name: crs
+  Annotation: str
+  Default: <required>
+- Name: exports
+  Annotation: Dict[str, Optional[str]]
+  Default: <factory>
+- Name: diagnostics
+  Annotation: Dict[str, Any]
+  Default: <factory>
+- Name: metrics
+  Annotation: Optional[TerrainMetrics]
+  Default: None
+- Name: metadata
+  Annotation: Dict[str, Any]
+  Default: <factory>
+Example:
+    from lunadem import DEMResult
+    instance = DEMResult(...)
+    print(instance)
+
+Class 3: GeoreferenceConfig
+Import: from lunadem import GeoreferenceConfig
+Source module: lunadem.core.config
+Constructor signature: GeoreferenceConfig(*, crs: str = '+proj=longlat +a=1737400 +b=1737400 +no_defs', projection: str = 'IAU_MOON', corner_coords: Optional[lunadem.core.config.CornerCoordinates] = None) -> None
+Summary: Georeferencing metadata for planetary outputs.
+Docstring:
+Georeferencing metadata for planetary outputs.
+Constructor parameters:
+- Name: crs
+  Annotation: <class 'str'>
+  Default: +proj=longlat +a=1737400 +b=1737400 +no_defs
+- Name: projection
+  Annotation: <class 'str'>
+  Default: IAU_MOON
+- Name: corner_coords
+  Annotation: Optional[lunadem.core.config.CornerCoordinates]
+  Default: None
+Example:
+    from lunadem import GeoreferenceConfig
+    instance = GeoreferenceConfig(...)
+    print(instance)
+
+Class 4: HybridMethodConfig
+Import: from lunadem import HybridMethodConfig
+Source module: lunadem.core.config
+Constructor signature: HybridMethodConfig(*, blend_weight: Annotated[float, Ge(ge=0.0), Le(le=1.0)] = 0.65, fallback_to_sfs_on_ml_failure: bool = True) -> None
+Summary: Hybrid method settings.
+Docstring:
+Hybrid method settings.
+Constructor parameters:
+- Name: blend_weight
+  Annotation: Annotated[float, Ge(ge=0.0), Le(le=1.0)]
+  Default: 0.65
+- Name: fallback_to_sfs_on_ml_failure
+  Annotation: <class 'bool'>
+  Default: True
+Example:
+    from lunadem import HybridMethodConfig
+    instance = HybridMethodConfig(...)
+    print(instance)
+
+Class 5: IlluminationConfig
+Import: from lunadem import IlluminationConfig
+Source module: lunadem.core.config
+Constructor signature: IlluminationConfig(*, sun_azimuth_deg: Annotated[float, Ge(ge=0.0), Lt(lt=360.0)] = 101.55451, sun_elevation_deg: Annotated[float, Gt(gt=0.0), Lt(lt=90.0)] = 34.802249) -> None
+Summary: Illumination geometry in degrees.
+Docstring:
+Illumination geometry in degrees.
+Constructor parameters:
+- Name: sun_azimuth_deg
+  Annotation: Annotated[float, Ge(ge=0.0), Lt(lt=360.0)]
+  Default: 101.55451
+- Name: sun_elevation_deg
+  Annotation: Annotated[float, Gt(gt=0.0), Lt(lt=90.0)]
+  Default: 34.802249
+Example:
+    from lunadem import IlluminationConfig
+    instance = IlluminationConfig(...)
+    print(instance)
+
+Class 6: KaguyaScene
+Import: from lunadem import KaguyaScene
+Source module: lunadem.core.models
+Constructor signature: KaguyaScene(scene_id: 'str', scene_dir: 'Path', item_path: 'Path', camera_path: 'Path', image_path: 'Path', thumbnail_path: 'Optional[Path]', stac_item: 'Dict[str, Any]', camera_model: 'Dict[str, Any]', geometry: 'SceneGeometry') -> None
+Summary: Loaded Kaguya scene with typed metadata.
+Docstring:
+Loaded Kaguya scene with typed metadata.
+Constructor parameters:
+- Name: scene_id
+  Annotation: str
+  Default: <required>
+- Name: scene_dir
+  Annotation: Path
+  Default: <required>
+- Name: item_path
+  Annotation: Path
+  Default: <required>
+- Name: camera_path
+  Annotation: Path
+  Default: <required>
+- Name: image_path
+  Annotation: Path
+  Default: <required>
+- Name: thumbnail_path
+  Annotation: Optional[Path]
+  Default: <required>
+- Name: stac_item
+  Annotation: Dict[str, Any]
+  Default: <required>
+- Name: camera_model
+  Annotation: Dict[str, Any]
+  Default: <required>
+- Name: geometry
+  Annotation: SceneGeometry
+  Default: <required>
+Example:
+    from lunadem import KaguyaScene
+    instance = KaguyaScene(...)
+    print(instance)
+
+Class 7: LandingConfig
+Import: from lunadem import LandingConfig
+Source module: lunadem.core.config
+Constructor signature: LandingConfig(*, pixel_size_m: Annotated[float, Gt(gt=0)] = 1.0, constraints: lunadem.core.config.LandingConstraints = <factory>) -> None
+Summary: Landing suitability configuration.
+Docstring:
+Landing suitability configuration.
+Constructor parameters:
+- Name: pixel_size_m
+  Annotation: Annotated[float, Gt(gt=0)]
+  Default: 1.0
+- Name: constraints
+  Annotation: <class 'lunadem.core.config.LandingConstraints'>
+  Default: <factory>
+Example:
+    from lunadem import LandingConfig
+    instance = LandingConfig(...)
+    print(instance)
+
+Class 8: LandingConstraints
+Import: from lunadem import LandingConstraints
+Source module: lunadem.core.config
+Constructor signature: LandingConstraints(*, max_slope_deg: Annotated[float, Ge(ge=0.0), Le(le=90.0)] = 12.0, max_roughness_m: Annotated[float, Ge(ge=0)] = 1.5, hazard_height_m: Annotated[float, Ge(ge=0)] = 0.8, hazard_window: Annotated[int, Ge(ge=1), Le(le=31)] = 5, min_safe_area_px: Annotated[int, Ge(ge=1)] = 64) -> None
+Summary: Vehicle constraints used for deterministic landing checks.
+Docstring:
+Vehicle constraints used for deterministic landing checks.
+Constructor parameters:
+- Name: max_slope_deg
+  Annotation: Annotated[float, Ge(ge=0.0), Le(le=90.0)]
+  Default: 12.0
+- Name: max_roughness_m
+  Annotation: Annotated[float, Ge(ge=0)]
+  Default: 1.5
+- Name: hazard_height_m
+  Annotation: Annotated[float, Ge(ge=0)]
+  Default: 0.8
+- Name: hazard_window
+  Annotation: Annotated[int, Ge(ge=1), Le(le=31)]
+  Default: 5
+- Name: min_safe_area_px
+  Annotation: Annotated[int, Ge(ge=1)]
+  Default: 64
+Example:
+    from lunadem import LandingConstraints
+    instance = LandingConstraints(...)
+    print(instance)
+
+Class 9: LandingReport
+Import: from lunadem import LandingReport
+Source module: lunadem.core.models
+Constructor signature: LandingReport(safe_mask: 'np.ndarray', slope_mask: 'np.ndarray', roughness_mask: 'np.ndarray', hazard_mask: 'np.ndarray', safe_fraction: 'float', score: 'float', summary: 'Dict[str, Any]') -> None
+Summary: Landing suitability output and diagnostic maps.
+Docstring:
+Landing suitability output and diagnostic maps.
+Constructor parameters:
+- Name: safe_mask
+  Annotation: np.ndarray
+  Default: <required>
+- Name: slope_mask
+  Annotation: np.ndarray
+  Default: <required>
+- Name: roughness_mask
+  Annotation: np.ndarray
+  Default: <required>
+- Name: hazard_mask
+  Annotation: np.ndarray
+  Default: <required>
+- Name: safe_fraction
+  Annotation: float
+  Default: <required>
+- Name: score
+  Annotation: float
+  Default: <required>
+- Name: summary
+  Annotation: Dict[str, Any]
+  Default: <required>
+Example:
+    from lunadem import LandingReport
+    instance = LandingReport(...)
+    print(instance)
+
+Class 10: LandingSiteResult
+Import: from lunadem import LandingSiteResult
+Source module: lunadem.core.models
+Constructor signature: LandingSiteResult(row: 'int', col: 'int', score: 'float', pixel_size_m: 'float', x_m: 'float', y_m: 'float', safe_radius_px: 'int', rover: 'RoverSpec', safe_mask: 'np.ndarray', score_map: 'np.ndarray', summary: 'Dict[str, Any]' = <factory>, metrics: 'Optional[TerrainMetrics]' = None, report: 'Optional[LandingReport]' = None) -> None
+Summary: Best landing site for a rover on an image or DEM.
+Docstring:
+Best landing site for a rover on an image or DEM.
+Constructor parameters:
+- Name: row
+  Annotation: int
+  Default: <required>
+- Name: col
+  Annotation: int
+  Default: <required>
+- Name: score
+  Annotation: float
+  Default: <required>
+- Name: pixel_size_m
+  Annotation: float
+  Default: <required>
+- Name: x_m
+  Annotation: float
+  Default: <required>
+- Name: y_m
+  Annotation: float
+  Default: <required>
+- Name: safe_radius_px
+  Annotation: int
+  Default: <required>
+- Name: rover
+  Annotation: RoverSpec
+  Default: <required>
+- Name: safe_mask
+  Annotation: np.ndarray
+  Default: <required>
+- Name: score_map
+  Annotation: np.ndarray
+  Default: <required>
+- Name: summary
+  Annotation: Dict[str, Any]
+  Default: <factory>
+- Name: metrics
+  Annotation: Optional[TerrainMetrics]
+  Default: None
+- Name: report
+  Annotation: Optional[LandingReport]
+  Default: None
+Example:
+    from lunadem import LandingSiteResult
+    instance = LandingSiteResult(...)
+    print(instance)
+
+Class 11: MLMethodConfig
+Import: from lunadem import MLMethodConfig
+Source module: lunadem.core.config
+Constructor signature: MLMethodConfig(*, enabled: bool = False, model_path: Optional[str] = None, fallback_smoothing_sigma: Annotated[float, Ge(ge=0.0), Le(le=20.0)] = 1.2) -> None
+Summary: ML DEM settings (plugin-ready baseline).
+Docstring:
+ML DEM settings (plugin-ready baseline).
+Constructor parameters:
+- Name: enabled
+  Annotation: <class 'bool'>
+  Default: False
+- Name: model_path
+  Annotation: Optional[str]
+  Default: None
+- Name: fallback_smoothing_sigma
+  Annotation: Annotated[float, Ge(ge=0.0), Le(le=20.0)]
+  Default: 1.2
+Example:
+    from lunadem import MLMethodConfig
+    instance = MLMethodConfig(...)
+    print(instance)
+
+Class 12: MetadataPrediction
+Import: from lunadem import MetadataPrediction
+Source module: lunadem.core.models
+Constructor signature: MetadataPrediction(model_name: 'str', targets: 'Dict[str, float]', uncertainty: 'Dict[str, float]', metrics: 'Dict[str, float]', patch_count: 'int', source: 'str') -> None
+Summary: Aggregated metadata prediction result.
+Docstring:
+Aggregated metadata prediction result.
+Constructor parameters:
+- Name: model_name
+  Annotation: str
+  Default: <required>
+- Name: targets
+  Annotation: Dict[str, float]
+  Default: <required>
+- Name: uncertainty
+  Annotation: Dict[str, float]
+  Default: <required>
+- Name: metrics
+  Annotation: Dict[str, float]
+  Default: <required>
+- Name: patch_count
+  Annotation: int
+  Default: <required>
+- Name: source
+  Annotation: str
+  Default: <required>
+Example:
+    from lunadem import MetadataPrediction
+    instance = MetadataPrediction(...)
+    print(instance)
+
+Class 13: OutputConfig
+Import: from lunadem import OutputConfig
+Source module: lunadem.core.config
+Constructor signature: OutputConfig(*, output_dir: pathlib.Path = WindowsPath('output'), base_name: str = 'reconstructed_dem', save_geotiff: bool = True, save_obj: bool = True, save_ply: bool = False, save_visualizations: bool = True, save_interactive_html: bool = True, save_manifest: bool = True) -> None
+Summary: File outputs and rendering controls.
+Docstring:
+File outputs and rendering controls.
+Constructor parameters:
+- Name: output_dir
+  Annotation: <class 'pathlib.Path'>
+  Default: output
+- Name: base_name
+  Annotation: <class 'str'>
+  Default: reconstructed_dem
+- Name: save_geotiff
+  Annotation: <class 'bool'>
+  Default: True
+- Name: save_obj
+  Annotation: <class 'bool'>
+  Default: True
+- Name: save_ply
+  Annotation: <class 'bool'>
+  Default: False
+- Name: save_visualizations
+  Annotation: <class 'bool'>
+  Default: True
+- Name: save_interactive_html
+  Annotation: <class 'bool'>
+  Default: True
+- Name: save_manifest
+  Annotation: <class 'bool'>
+  Default: True
+Example:
+    from lunadem import OutputConfig
+    instance = OutputConfig(...)
+    print(instance)
+
+Class 14: PreprocessingConfig
+Import: from lunadem import PreprocessingConfig
+Source module: lunadem.core.config
+Constructor signature: PreprocessingConfig(*, normalize: bool = True, gaussian_sigma: Annotated[float, Ge(ge=0.0), Le(le=20.0)] = 0.0, median_size: Annotated[int, Ge(ge=0), Le(le=21)] = 0, shadow_mask: bool = True, shadow_threshold: Annotated[Optional[float], Ge(ge=0.0), Le(le=1.0)] = None) -> None
+Summary: Image preprocessing controls.
+Docstring:
+Image preprocessing controls.
+Constructor parameters:
+- Name: normalize
+  Annotation: <class 'bool'>
+  Default: True
+- Name: gaussian_sigma
+  Annotation: Annotated[float, Ge(ge=0.0), Le(le=20.0)]
+  Default: 0.0
+- Name: median_size
+  Annotation: Annotated[int, Ge(ge=0), Le(le=21)]
+  Default: 0
+- Name: shadow_mask
+  Annotation: <class 'bool'>
+  Default: True
+- Name: shadow_threshold
+  Annotation: Annotated[Optional[float], Ge(ge=0.0), Le(le=1.0)]
+  Default: None
+Example:
+    from lunadem import PreprocessingConfig
+    instance = PreprocessingConfig(...)
+    print(instance)
+
+Class 15: ReconstructionConfig
+Import: from lunadem import ReconstructionConfig
+Source module: lunadem.core.config
+Constructor signature: ReconstructionConfig(*, illumination: lunadem.core.config.IlluminationConfig = <factory>, sensor: lunadem.core.config.SensorConfig = <factory>, georeference: lunadem.core.config.GeoreferenceConfig = <factory>, preprocessing: lunadem.core.config.PreprocessingConfig = <factory>, sfs: lunadem.core.config.SFSMethodConfig = <factory>, ml: lunadem.core.config.MLMethodConfig = <factory>, hybrid: lunadem.core.config.HybridMethodConfig = <factory>, output: lunadem.core.config.OutputConfig = <factory>, metadata: Dict[str, Any] = <factory>) -> None
+Summary: Top-level reconstruction configuration.
+Docstring:
+Top-level reconstruction configuration.
+Constructor parameters:
+- Name: illumination
+  Annotation: <class 'lunadem.core.config.IlluminationConfig'>
+  Default: <factory>
+- Name: sensor
+  Annotation: <class 'lunadem.core.config.SensorConfig'>
+  Default: <factory>
+- Name: georeference
+  Annotation: <class 'lunadem.core.config.GeoreferenceConfig'>
+  Default: <factory>
+- Name: preprocessing
+  Annotation: <class 'lunadem.core.config.PreprocessingConfig'>
+  Default: <factory>
+- Name: sfs
+  Annotation: <class 'lunadem.core.config.SFSMethodConfig'>
+  Default: <factory>
+- Name: ml
+  Annotation: <class 'lunadem.core.config.MLMethodConfig'>
+  Default: <factory>
+- Name: hybrid
+  Annotation: <class 'lunadem.core.config.HybridMethodConfig'>
+  Default: <factory>
+- Name: output
+  Annotation: <class 'lunadem.core.config.OutputConfig'>
+  Default: <factory>
+- Name: metadata
+  Annotation: Dict[str, Any]
+  Default: <factory>
+Example:
+    from lunadem import ReconstructionConfig
+    instance = ReconstructionConfig(...)
+    print(instance)
+
+Class 16: RoverSpec
+Import: from lunadem import RoverSpec
+Source module: lunadem.core.models
+Constructor signature: RoverSpec(name: 'str', length_m: 'float', width_m: 'float', height_m: 'float', ground_clearance_m: 'float' = 0.2, safety_margin_m: 'float' = 0.25, source: 'str' = '', mesh_path: 'Optional[str]' = None, metadata: 'Dict[str, Any]' = <factory>) -> None
+Summary: Rover footprint and visualization parameters.
+Docstring:
+Rover footprint and visualization parameters.
+Constructor parameters:
+- Name: name
+  Annotation: str
+  Default: <required>
+- Name: length_m
+  Annotation: float
+  Default: <required>
+- Name: width_m
+  Annotation: float
+  Default: <required>
+- Name: height_m
+  Annotation: float
+  Default: <required>
+- Name: ground_clearance_m
+  Annotation: float
+  Default: 0.2
+- Name: safety_margin_m
+  Annotation: float
+  Default: 0.25
+- Name: source
+  Annotation: str
+  Default: 
+- Name: mesh_path
+  Annotation: Optional[str]
+  Default: None
+- Name: metadata
+  Annotation: Dict[str, Any]
+  Default: <factory>
+Example:
+    from lunadem import RoverSpec
+    instance = RoverSpec(...)
+    print(instance)
+
+Class 17: SFSMethodConfig
+Import: from lunadem import SFSMethodConfig
+Source module: lunadem.core.config
+Constructor signature: SFSMethodConfig(*, initial_surface: Literal['flat'] = 'flat', regularization_lambda: Annotated[float, Gt(gt=0.0), Le(le=1.0)] = 0.005, max_iterations: Annotated[int, Ge(ge=1), Le(le=5000)] = 150, convergence_tol: Annotated[float, Gt(gt=0)] = 1e-07, multiscale_levels: Annotated[int, Ge(ge=1), Le(le=8)] = 3, downscale_factor: Annotated[float, Gt(gt=0.1), Lt(lt=1.0)] = 0.5, max_long_side_px: Annotated[int, Ge(ge=128), Le(le=8192)] = 1024) -> None
+Summary: Classical shape-from-shading settings.
+Docstring:
+Classical shape-from-shading settings.
+Constructor parameters:
+- Name: initial_surface
+  Annotation: Literal['flat']
+  Default: flat
+- Name: regularization_lambda
+  Annotation: Annotated[float, Gt(gt=0.0), Le(le=1.0)]
+  Default: 0.005
+- Name: max_iterations
+  Annotation: Annotated[int, Ge(ge=1), Le(le=5000)]
+  Default: 150
+- Name: convergence_tol
+  Annotation: Annotated[float, Gt(gt=0)]
+  Default: 1e-07
+- Name: multiscale_levels
+  Annotation: Annotated[int, Ge(ge=1), Le(le=8)]
+  Default: 3
+- Name: downscale_factor
+  Annotation: Annotated[float, Gt(gt=0.1), Lt(lt=1.0)]
+  Default: 0.5
+- Name: max_long_side_px
+  Annotation: Annotated[int, Ge(ge=128), Le(le=8192)]
+  Default: 1024
+Example:
+    from lunadem import SFSMethodConfig
+    instance = SFSMethodConfig(...)
+    print(instance)
+
+Class 18: SceneGeometry
+Import: from lunadem import SceneGeometry
+Source module: lunadem.core.models
+Constructor signature: SceneGeometry(acquisition_duration_s: 'Optional[float]' = None, line_time_s: 'Optional[float]' = None, centroid_lat_deg: 'Optional[float]' = None, centroid_lon_deg: 'Optional[float]' = None, bbox_deg: 'Optional[Tuple[float, float, float, float]]' = None, bbox_area_deg2: 'Optional[float]' = None, bbox_area_km2: 'Optional[float]' = None, gsd_m: 'Optional[float]' = None, image_shape: 'Optional[Tuple[int, int]]' = None, ground_width_m: 'Optional[float]' = None, ground_height_m: 'Optional[float]' = None, ground_area_km2: 'Optional[float]' = None, transform: 'Optional[Tuple[float, ...]]' = None, sun_vector: 'Optional[np.ndarray]' = None, mean_camera_position_km: 'Optional[np.ndarray]' = None, mean_camera_velocity_km_s: 'Optional[np.ndarray]' = None, mean_camera_distance_km: 'Optional[float]' = None, mean_sun_position_km: 'Optional[np.ndarray]' = None, mean_sun_distance_km: 'Optional[float]' = None, camera_path_length_km: 'Optional[float]' = None, view_azimuth_deg: 'Optional[float]' = None, off_nadir_deg: 'Optional[float]' = None, footprint_lonlat: 'List[Tuple[float, float]]' = <factory>, footprint_xyz_m: 'List[Tuple[float, float, float]]' = <factory>) -> None
+Summary: Derived scene geometry and acquisition metadata.
+Docstring:
+Derived scene geometry and acquisition metadata.
+Constructor parameters:
+- Name: acquisition_duration_s
+  Annotation: Optional[float]
+  Default: None
+- Name: line_time_s
+  Annotation: Optional[float]
+  Default: None
+- Name: centroid_lat_deg
+  Annotation: Optional[float]
+  Default: None
+- Name: centroid_lon_deg
+  Annotation: Optional[float]
+  Default: None
+- Name: bbox_deg
+  Annotation: Optional[Tuple[float, float, float, float]]
+  Default: None
+- Name: bbox_area_deg2
+  Annotation: Optional[float]
+  Default: None
+- Name: bbox_area_km2
+  Annotation: Optional[float]
+  Default: None
+- Name: gsd_m
+  Annotation: Optional[float]
+  Default: None
+- Name: image_shape
+  Annotation: Optional[Tuple[int, int]]
+  Default: None
+- Name: ground_width_m
+  Annotation: Optional[float]
+  Default: None
+- Name: ground_height_m
+  Annotation: Optional[float]
+  Default: None
+- Name: ground_area_km2
+  Annotation: Optional[float]
+  Default: None
+- Name: transform
+  Annotation: Optional[Tuple[float, ...]]
+  Default: None
+- Name: sun_vector
+  Annotation: Optional[np.ndarray]
+  Default: None
+- Name: mean_camera_position_km
+  Annotation: Optional[np.ndarray]
+  Default: None
+- Name: mean_camera_velocity_km_s
+  Annotation: Optional[np.ndarray]
+  Default: None
+- Name: mean_camera_distance_km
+  Annotation: Optional[float]
+  Default: None
+- Name: mean_sun_position_km
+  Annotation: Optional[np.ndarray]
+  Default: None
+- Name: mean_sun_distance_km
+  Annotation: Optional[float]
+  Default: None
+- Name: camera_path_length_km
+  Annotation: Optional[float]
+  Default: None
+- Name: view_azimuth_deg
+  Annotation: Optional[float]
+  Default: None
+- Name: off_nadir_deg
+  Annotation: Optional[float]
+  Default: None
+- Name: footprint_lonlat
+  Annotation: List[Tuple[float, float]]
+  Default: <factory>
+- Name: footprint_xyz_m
+  Annotation: List[Tuple[float, float, float]]
+  Default: <factory>
+Example:
+    from lunadem import SceneGeometry
+    instance = SceneGeometry(...)
+    print(instance)
+
+Class 19: SensorConfig
+Import: from lunadem import SensorConfig
+Source module: lunadem.core.config
+Constructor signature: SensorConfig(*, spacecraft_altitude_km: Annotated[float, Gt(gt=0)] = 95.85, focal_length_mm: Annotated[float, Gt(gt=0)] = 140.0, detector_pixel_width_um: Annotated[float, Gt(gt=0)] = 7.0) -> None
+Summary: Sensor/camera geometry used for DEM metric scaling.
+Docstring:
+Sensor/camera geometry used for DEM metric scaling.
+Constructor parameters:
+- Name: spacecraft_altitude_km
+  Annotation: Annotated[float, Gt(gt=0)]
+  Default: 95.85
+- Name: focal_length_mm
+  Annotation: Annotated[float, Gt(gt=0)]
+  Default: 140.0
+- Name: detector_pixel_width_um
+  Annotation: Annotated[float, Gt(gt=0)]
+  Default: 7.0
+Example:
+    from lunadem import SensorConfig
+    instance = SensorConfig(...)
+    print(instance)
+
+Class 20: TerrainMetrics
+Import: from lunadem import TerrainMetrics
+Source module: lunadem.core.models
+Constructor signature: TerrainMetrics(slope_deg: 'np.ndarray', roughness_m: 'np.ndarray', curvature: 'np.ndarray', stats: 'Dict[str, float]', histograms: 'Dict[str, Any]') -> None
+Summary: Terrain analytics outputs.
+Docstring:
+Terrain analytics outputs.
+Constructor parameters:
+- Name: slope_deg
+  Annotation: np.ndarray
+  Default: <required>
+- Name: roughness_m
+  Annotation: np.ndarray
+  Default: <required>
+- Name: curvature
+  Annotation: np.ndarray
+  Default: <required>
+- Name: stats
+  Annotation: Dict[str, float]
+  Default: <required>
+- Name: histograms
+  Annotation: Dict[str, Any]
+  Default: <required>
+Example:
+    from lunadem import TerrainMetrics
+    instance = TerrainMetrics(...)
+    print(instance)
+
+SECTION 7: PUBLIC CONSTANT REFERENCE
+------------------------------------
+Constant 1: DEFAULT_MOON_CRS
+Import: from lunadem import DEFAULT_MOON_CRS
+Value preview: +proj=longlat +a=1737400 +b=1737400 +no_defs
+Note: constants are included here to keep the reference manual complete.
+
+Constant 2: MOON_RADIUS_M
+Import: from lunadem import MOON_RADIUS_M
+Value preview: 1737400.0
+Note: constants are included here to keep the reference manual complete.
+
+Constant 3: TEST_SCENE_ID
+Import: from lunadem import TEST_SCENE_ID
+Value preview: TC1S2B0_01_07496N087E3020
+Note: constants are included here to keep the reference manual complete.
+
+Constant 4: __version__
+Import: from lunadem import __version__
+Value preview: 0.3.0
+Note: constants are included here to keep the reference manual complete.
+
+SECTION 8: RESOURCES AND FILES
+-------------------------------
+- README.md path: D:\Projects\Generation-of-High-resolution-Digital-Elevation-Model-from-Lunar-Images-using-Photoclinometry\README.md
+- run.md path: D:\Projects\Generation-of-High-resolution-Digital-Elevation-Model-from-Lunar-Images-using-Photoclinometry\run.md
+- lunar_data.md path: D:\Projects\Generation-of-High-resolution-Digital-Elevation-Model-from-Lunar-Images-using-Photoclinometry\lunar_data.md
+- sfs.md path: D:\Projects\Generation-of-High-resolution-Digital-Elevation-Model-from-Lunar-Images-using-Photoclinometry\sfs.md
+- update.md path: D:\Projects\Generation-of-High-resolution-Digital-Elevation-Model-from-Lunar-Images-using-Photoclinometry\update.md
+- metrics.json path: D:\Projects\Generation-of-High-resolution-Digital-Elevation-Model-from-Lunar-Images-using-Photoclinometry\lunadem\assets\models\metrics.json
+- Rover reference media under `MISSION CHANDRA/` is used as design context only.
+
+SECTION 9: TROUBLESHOOTING
+--------------------------
+- If Matplotlib windows are not desired, set `show=False` and save plots to disk instead.
+- If you are running in CI, set `MPLBACKEND=Agg`.
+- If model export fails because of ONNX import issues, ensure `ml-dtypes>=0.5` or use the compatibility shim in the training script.
+- If large-scene SFS feels slow, reduce `config.sfs.max_long_side_px` further.
+- If you only need metadata prediction, call the `predict_*` APIs directly without reconstructing a DEM first.
+
+SECTION 10: RELEASE CHECKLIST
+-----------------------------
+1. Run tests.
+2. Re-train metadata models when the dataset changes.
+3. Re-run this documentation generator.
+4. Build wheel and sdist.
+5. Verify ONNX artifacts are included.
+6. Publish to PyPI and update GitHub release notes.
+

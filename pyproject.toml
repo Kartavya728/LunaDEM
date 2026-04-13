@@ -7,7 +7,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "lunadem"
-version = "0.3.0"
+version = "0.4.0"
 description = "Lunar DEM generation, Kaguya scene analysis, metadata prediction, and rover-aware landing utilities."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -58,7 +58,8 @@ dependencies = [
 [project.optional-dependencies]
 ml = [
   "torch>=2.2",
-  "onnx>=1.16",
+  "onnx>=1.19",
+  "ml-dtypes>=0.5",
   "scikit-learn>=1.5"
 ]
 viz = [
@@ -86,7 +87,8 @@ dev = [
   "twine>=6.2",
   "wheel>=0.45",
   "types-PyYAML>=6.0",
-  "onnx>=1.16",
+  "onnx>=1.19",
+  "ml-dtypes>=0.5",
   "scikit-learn>=1.5",
   "pybind11>=2.12",
   "scikit-build-core>=0.10"
@@ -122,6 +124,7 @@ sdist.include = [
   "pyproject.toml",
   "CMakeLists.txt",
   "run.md",
+  "documentation.txt",
   "sfs.md",
   "lunar_data.md",
   "update.md"

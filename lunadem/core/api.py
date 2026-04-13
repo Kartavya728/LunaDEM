@@ -121,12 +121,15 @@ def _save_exports(
             from lunadem.visualization import plot_3d_surface_interactive
             from lunadem.visualization.plots import plot_3d_surface, plot_depth_map
 
-            exports["depth_map_png"] = plot_depth_map(dem_meters, base.with_name("depth_map.png"))
-            exports["surface_3d_png"] = plot_3d_surface(dem_meters, base.with_name("surface_3d.png"))
+            depth_map_path = base.with_name("depth_map.png")
+            surface_png_path = base.with_name("surface_3d.png")
+            plot_depth_map(dem_meters, depth_map_path, show=False)
+            plot_3d_surface(dem_meters, surface_png_path, show=False)
+            exports["depth_map_png"] = str(depth_map_path)
+            exports["surface_3d_png"] = str(surface_png_path)
             if config.output.save_interactive_html:
-                figure = plot_3d_surface_interactive(dem_meters, title="Interactive Reconstructed Surface")
                 html_path = base.with_name("surface_3d.html")
-                html_path.write_text(figure.to_html(include_plotlyjs="cdn"), encoding="utf-8")
+                plot_3d_surface_interactive(dem_meters, title="Interactive Reconstructed Surface", save_path=html_path, show=False)
                 exports["surface_3d_html"] = str(html_path)
         except Exception as exc:
             LOGGER.warning("Visualization export skipped: %s", exc)

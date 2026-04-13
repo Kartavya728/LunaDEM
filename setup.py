@@ -48,7 +48,7 @@ setup(
         "onnxruntime>=1.18",
     ],
     extras_require={
-        "ml": ["torch>=2.2", "onnx>=1.16", "scikit-learn>=1.5"],
+        "ml": ["torch>=2.2", "onnx>=1.19", "ml-dtypes>=0.5", "scikit-learn>=1.5"],
         "viz": ["matplotlib>=3.8", "plotly>=5.22"],
         "pds": ["pvl>=1.3"],
         "native": ["pybind11>=2.12", "scikit-build-core>=0.10"],
@@ -62,7 +62,8 @@ setup(
             "twine>=6.2",
             "wheel>=0.45",
             "types-PyYAML>=6.0",
-            "onnx>=1.16",
+            "onnx>=1.19",
+            "ml-dtypes>=0.5",
             "scikit-learn>=1.5",
             "pybind11>=2.12",
             "scikit-build-core>=0.10",

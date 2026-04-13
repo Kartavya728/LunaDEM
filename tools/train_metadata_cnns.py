@@ -71,6 +71,23 @@ class TinyMetaCNN(nn.Module):
         return self.head(self.features(inputs))
 
 
+def _patch_ml_dtypes_for_onnx() -> None:
+    """Patch older ml_dtypes installs so ONNX import/export remains usable."""
+    try:
+        import ml_dtypes
+    except Exception:
+        return
+
+    alias_map = {
+        "float4_e2m1fn": "float8_e4m3fn",
+        "float4_e2m1fnuz": "float8_e4m3fnuz",
+        "float8_e8m0fnu": "float8_e5m2",
+    }
+    for missing_name, fallback_name in alias_map.items():
+        if not hasattr(ml_dtypes, missing_name) and hasattr(ml_dtypes, fallback_name):
+            setattr(ml_dtypes, missing_name, getattr(ml_dtypes, fallback_name))
+
+
 def _set_seed(seed: int = SEED) -> None:
     random.seed(seed)
     np.random.seed(seed)
@@ -177,6 +194,9 @@ def _scene_level_mean(values: np.ndarray, groups: np.ndarray) -> tuple[np.ndarra
 
 def main() -> None:
     _set_seed()
+    _patch_ml_dtypes_for_onnx()
+    import onnx  # noqa: F401
+
     dataset_root = Path(DEFAULT_DATASET_ROOT)
     output_root = Path("lunadem") / "assets" / "models"
     output_root.mkdir(parents=True, exist_ok=True)
@@ -184,7 +204,12 @@ def main() -> None:
     records = _scene_records(dataset_root)
     x, labels_by_name, groups = _build_dataset(records)
 
-    metrics_payload = {"models": {}, "scene_count": len(records), "patches_per_scene": PATCHES_PER_SCENE}
+    metrics_payload = {
+        "models": {},
+        "scene_count": len(records),
+        "patches_per_scene": PATCHES_PER_SCENE,
+        "note": "real_onnx_models",
+    }
     group_kfold = GroupKFold(n_splits=min(3, len(records)))
 
     for model_name, spec in MODEL_SPECS.items():

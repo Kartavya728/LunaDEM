@@ -73,6 +73,7 @@ class SFSMethodConfig(BaseModel):
     convergence_tol: float = Field(default=1e-7, gt=0.0)
     multiscale_levels: int = Field(default=3, ge=1, le=8)
     downscale_factor: float = Field(default=0.5, gt=0.1, lt=1.0)
+    max_long_side_px: int = Field(default=1024, ge=128, le=8192)
 
 
 class MLMethodConfig(BaseModel):

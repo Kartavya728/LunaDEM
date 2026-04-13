@@ -18,7 +18,14 @@ v2.md
 .venv-work/
 venv/
 .pytest_tmp/
+.pytest_tmp_local/
 pytest_work/
+pytest-work/
+pytest-work-base/
+pytest-work-base-*/
+pytest-generated/
+lunadem-test-*/
+manual-test-dir/
 temp_build/
 
 # Demo and generated outputs

@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Dict, Tuple
 
 import numpy as np
-from scipy.ndimage import gaussian_filter, laplace, median_filter
+from scipy.ndimage import gaussian_filter, laplace, median_filter, zoom
 from scipy.optimize import OptimizeResult, minimize
 
 from lunadem.core.config import ReconstructionConfig
@@ -39,6 +39,29 @@ def _prepare_observation(
     return observed, mask, shadow_threshold
 
 
+def _resize_surface(surface: np.ndarray, target_shape: Tuple[int, int]) -> np.ndarray:
+    y_scale = target_shape[0] / surface.shape[0]
+    x_scale = target_shape[1] / surface.shape[1]
+    return zoom(surface, zoom=(y_scale, x_scale), order=1).astype(np.float32)
+
+
+def _prepare_working_surface(
+    image: np.ndarray,
+    config: ReconstructionConfig,
+) -> tuple[np.ndarray, float]:
+    max_long_side = int(config.sfs.max_long_side_px)
+    long_side = max(image.shape)
+    if long_side <= max_long_side:
+        return image.astype(np.float32), 1.0
+
+    scale = max_long_side / float(long_side)
+    target_shape = (
+        max(int(round(image.shape[0] * scale)), 1),
+        max(int(round(image.shape[1] * scale)), 1),
+    )
+    return _resize_surface(image.astype(np.float32), target_shape), scale
+
+
 def sfs_cost_and_gradient(
     z_flat: np.ndarray,
     observed_image: np.ndarray,
@@ -48,7 +71,7 @@ def sfs_cost_and_gradient(
     valid_mask: np.ndarray,
 ) -> Tuple[float, np.ndarray]:
     """Compute SFS objective and gradient for L-BFGS-B."""
-    z = z_flat.reshape(shape)
+    z = z_flat.reshape(shape).astype(np.float32)
 
     predicted = calculate_predicted_image(z, light_vec).astype(np.float32)
     brightness_error = (observed_image - predicted) * valid_mask
@@ -74,7 +97,7 @@ def sfs_cost_and_gradient(
     smoothness_gradient = laplace(laplacian_z, mode="nearest")
     total_gradient = brightness_gradient + lambda_reg * smoothness_gradient
 
-    return total_cost, total_gradient.flatten().astype(np.float64)
+    return total_cost, total_gradient.ravel().astype(np.float64)
 
 
 def run_sfs_optimization(
@@ -140,9 +163,30 @@ class SFSMethod(ReconstructionMethod):
         config: ReconstructionConfig,
         initial_dem: np.ndarray | None = None,
     ) -> MethodResult:
+        original_shape = image.shape
+        working_image, resample_scale = _prepare_working_surface(image, config)
+        working_initial_dem = None
+        if initial_dem is not None:
+            working_initial_dem = (
+                initial_dem.astype(np.float32)
+                if initial_dem.shape == working_image.shape
+                else _resize_surface(initial_dem.astype(np.float32), working_image.shape)
+            )
         dem, diagnostics = run_sfs_optimization(
-            image=image,
+            image=working_image,
             config=config,
-            initial_dem=initial_dem,
+            initial_dem=working_initial_dem,
+        )
+        if dem.shape != original_shape:
+            dem = _resize_surface(dem, original_shape)
+        diagnostics.update(
+            {
+                "original_height": float(original_shape[0]),
+                "original_width": float(original_shape[1]),
+                "working_height": float(working_image.shape[0]),
+                "working_width": float(working_image.shape[1]),
+                "resample_scale": float(resample_scale),
+                "used_working_resolution": bool(resample_scale != 1.0),
+            }
         )
         return MethodResult(dem=dem, diagnostics=diagnostics)

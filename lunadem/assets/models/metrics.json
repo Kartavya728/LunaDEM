@@ -6,17 +6,17 @@
         "sun_elevation_deg"
       ],
       "target_mean": [
-        95.42551553134183,
-        7.837696158357428
+        95.42555236816406,
+        7.83768367767334
       ],
       "target_std": [
-        1.765783127778215,
-        0.0025777154974959333
+        1.765783429145813,
+        0.0025786778423935175
       ],
       "patch_size": 96,
       "metrics": {
-        "sun_azimuth_deg_mae": 1.5308172837641665,
-        "sun_elevation_deg_mae": 0.0021846665246087285
+        "sun_azimuth_deg_mae": 1.6080622673034668,
+        "sun_elevation_deg_mae": 0.002215809188783169
       }
     },
     "view_geometry_cnn": {
@@ -25,17 +25,17 @@
         "view_azimuth_deg"
       ],
       "target_mean": [
-        17.462463467731055,
-        269.3472987707828
+        17.462461471557617,
+        269.3472900390625
       ],
       "target_std": [
-        0.10816299581538621,
-        0.05707129759149034
+        0.10816429555416107,
+        0.05706753954291344
       ],
       "patch_size": 96,
       "metrics": {
-        "off_nadir_deg_mae": 0.10520738243194433,
-        "view_azimuth_deg_mae": 0.05126359436722004
+        "off_nadir_deg_mae": 0.10521020740270615,
+        "view_azimuth_deg_mae": 0.0512678362429142
       }
     },
     "scene_context_cnn": {
@@ -45,24 +45,24 @@
         "centroid_lon_deg"
       ],
       "target_mean": [
-        7.738465607773173,
-        12.931824924878264,
-        -57.4799741992838
+        7.738461971282959,
+        12.931831359863281,
+        -57.47998046875
       ],
       "target_std": [
-        0.0923081588453764,
-        3.464056435684881,
-        0.5101035949044646
+        0.09230910241603851,
+        3.4640579223632812,
+        0.510104775428772
       ],
       "patch_size": 96,
       "metrics": {
-        "gsd_m_mae": 0.08083646025075823,
-        "centroid_lat_deg_mae": 3.000343860339204,
-        "centroid_lon_deg_mae": 0.5092168532984355
+        "gsd_m_mae": 0.08285414427518845,
+        "centroid_lat_deg_mae": 3.1490790843963623,
+        "centroid_lon_deg_mae": 0.5092051029205322
       }
     }
   },
   "scene_count": 18,
   "patches_per_scene": 16,
-  "note": "This file provides baseline packaged statistics and is replaced by trained ONNX exports when the metadata training pipeline is run in a healthy Python environment."
+  "note": "real_onnx_models"
 }

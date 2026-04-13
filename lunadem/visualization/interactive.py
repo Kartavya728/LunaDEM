@@ -44,6 +44,7 @@ def plot_3d_surface_interactive(
     *,
     title: str = "Interactive Lunar Surface",
     save_path: str | Path | None = None,
+    show: bool = False,
 ) -> go.Figure:
     """Render a hoverable 3D surface from a DEM or image-like array."""
     surface = _as_surface(surface_or_image)
@@ -67,6 +68,8 @@ def plot_3d_surface_interactive(
     )
     add_plotly_credit(figure)
     _save_html(figure, save_path)
+    if show:
+        figure.show()
     return figure
 
 
@@ -76,6 +79,7 @@ def plot_landing_site_2d(
     *,
     title: str = "Safe Landing Site",
     save_path: str | Path | None = None,
+    show: bool = False,
 ) -> go.Figure:
     """Overlay the selected landing site on a 2D image/surface view."""
     image = _as_surface(image_or_surface, normalize=False)
@@ -103,6 +107,8 @@ def plot_landing_site_2d(
     figure.update_layout(title=title, xaxis_title="Column (px)", yaxis_title="Row (px)", yaxis={"autorange": "reversed"})
     add_plotly_credit(figure)
     _save_html(figure, save_path)
+    if show:
+        figure.show()
     return figure
 
 
@@ -126,6 +132,7 @@ def plot_landing_site_3d(
     *,
     title: str = "3D Landing Site Visualization",
     save_path: str | Path | None = None,
+    show: bool = False,
 ) -> go.Figure:
     """Render the landing site on an interactive 3D surface with rover box."""
     surface = _as_surface(surface_or_dem)
@@ -148,6 +155,8 @@ def plot_landing_site_3d(
     )
     add_plotly_credit(figure)
     _save_html(figure, save_path)
+    if show:
+        figure.show()
     return figure
 
 
@@ -156,6 +165,7 @@ def plot_scene_geometry_3d(
     *,
     title: str = "Moon, Footprint, Camera, Sun, and Earth",
     save_path: str | Path | None = None,
+    show: bool = False,
 ) -> go.Figure:
     """Render the Moon, scene footprint, and space-geometry vectors."""
     resolved_scene = scene if isinstance(scene, KaguyaScene) else load_kaguya_scene(scene)
@@ -198,4 +208,17 @@ def plot_scene_geometry_3d(
     )
     add_plotly_credit(figure)
     _save_html(figure, save_path)
+    if show:
+        figure.show()
     return figure
+
+
+def plot_moon_surface_3d(
+    scene: KaguyaScene | str | Path,
+    *,
+    title: str = "Moon Surface And Scene Geometry",
+    save_path: str | Path | None = None,
+    show: bool = False,
+) -> go.Figure:
+    """Alias for interactive Moon-surface scene plotting."""
+    return plot_scene_geometry_3d(scene, title=title, save_path=save_path, show=show)

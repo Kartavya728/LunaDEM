@@ -43,9 +43,26 @@ def _load_surface(
 ) -> tuple[np.ndarray, float, TerrainMetrics | None, bool]:
     from lunadem.core.api import analyze_dem, generate_dem
 
+    internal_config = (
+        config
+        if config is not None
+        else ReconstructionConfig(
+            output={
+                "output_dir": "output",
+                "base_name": "landing_internal",
+                "save_geotiff": False,
+                "save_obj": False,
+                "save_ply": False,
+                "save_visualizations": False,
+                "save_interactive_html": False,
+                "save_manifest": False,
+            }
+        )
+    )
+
     if isinstance(image_or_dem, np.ndarray):
         if reconstruct:
-            result = generate_dem(image_or_dem, method=method, config=config, analysis_config=analysis_config)
+            result = generate_dem(image_or_dem, method=method, config=internal_config, analysis_config=analysis_config)
             return result.dem_meters, result.pixel_scale_m, result.metrics, True
         dem = image_or_dem.astype(np.float32)
         metrics = analyze_dem(dem, analysis_config=analysis_config)
@@ -61,7 +78,7 @@ def _load_surface(
             reconstruct = False
 
     if reconstruct:
-        result = generate_dem(path, method=method, config=config, analysis_config=analysis_config)
+        result = generate_dem(path, method=method, config=internal_config, analysis_config=analysis_config)
         return result.dem_meters, result.pixel_scale_m, result.metrics, True
 
     with rasterio.open(path) as src:

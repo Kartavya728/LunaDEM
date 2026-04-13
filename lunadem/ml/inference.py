@@ -25,6 +25,24 @@ def _assets_dir() -> Path:
     return Path(files("lunadem")).joinpath("assets", "models")
 
 
+def list_model_names() -> list[str]:
+    """Return the packaged metadata model names."""
+    return sorted(MODEL_TARGETS)
+
+
+def get_model_targets(model_name: str) -> tuple[str, ...]:
+    """Return the target names predicted by a given model."""
+    if model_name not in MODEL_TARGETS:
+        raise KeyError(f"Unknown model {model_name!r}")
+    return MODEL_TARGETS[model_name]
+
+
+def get_model_artifact_paths() -> dict[str, str]:
+    """Return the expected packaged ONNX artifact paths."""
+    assets_dir = _assets_dir()
+    return {name: str(assets_dir / f"{name}.onnx") for name in MODEL_TARGETS}
+
+
 @lru_cache(maxsize=1)
 def get_model_metrics() -> Dict[str, Any]:
     """Load packaged model metrics and scaling metadata."""
@@ -70,8 +88,9 @@ def _prepare_patches(
         )
         image = zoom(image, zoom_factors, order=1).astype(np.float32)
 
-    rows = np.linspace(0, max(image.shape[0] - patch_size, 0), num=max(1, int(np.sqrt(max_patches))), dtype=int)
-    cols = np.linspace(0, max(image.shape[1] - patch_size, 0), num=max(1, int(np.sqrt(max_patches))), dtype=int)
+    grid_size = max(1, int(np.ceil(np.sqrt(max_patches))))
+    rows = np.linspace(0, max(image.shape[0] - patch_size, 0), num=grid_size, dtype=int)
+    cols = np.linspace(0, max(image.shape[1] - patch_size, 0), num=grid_size, dtype=int)
 
     patches = []
     for row in rows:

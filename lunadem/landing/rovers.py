@@ -73,6 +73,11 @@ ROVER_LIBRARY: dict[str, RoverSpec] = {
 }
 
 
+def list_available_rovers() -> list[str]:
+    """Return the sorted names of built-in rover presets."""
+    return sorted(ROVER_LIBRARY)
+
+
 def get_rover_spec(
     name_or_custom_dims: str | RoverSpec | Mapping[str, Any] | None = None,
     *,

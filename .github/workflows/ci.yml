@@ -8,6 +8,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      MPLBACKEND: Agg
     strategy:
       fail-fast: false
       matrix:
